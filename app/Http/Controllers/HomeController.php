@@ -23,6 +23,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $users = \App\User::count();
+        return view('home', compact('users'));
     }
 }

@@ -11,8 +11,17 @@
   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
     <a class="navbar-brand p-2 col-sm-3 col-md-2 mr-0" href="#">e-Surat</a>
     <ul class="navbar-nav px-3">
-      <li class="nav-item text-nowrap"><a href="#" class="nav-link">Logout</a></li>
+      <li class="nav-item text-nowrap">
+          <a class="nav-link" href="{{ route('logout') }}"
+              onclick="event.preventDefault();
+                            document.getElementById('logout-form').submit();">
+              {{ __('Logout') }}
+          </a>
+      </li>
     </ul>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
   </nav>
   <div class="container-fluid">
     <div class="row">
@@ -28,7 +37,9 @@
           </ul>
           <hr>
           @if (Auth::user()->role === 'administrator')
-          @include('layouts.admin-links')
+            @include('layouts.admin-links')
+          @elseif(Auth::user()->role === 'employee')
+            @include('layouts.user-links')
           @endif
         </div>
       </nav>

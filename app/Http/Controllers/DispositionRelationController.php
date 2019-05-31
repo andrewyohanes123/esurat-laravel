@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\DispositionRelation;
+use App\Setting;
 
 class DispositionRelationController extends Controller
 {
@@ -15,10 +16,12 @@ class DispositionRelationController extends Controller
      */
     public function index()
     {
-        if (Auth::user()->role === 'administrator') {
-            $dispositions = DispositionRelation::paginate(10)->load(['from_user', 'to_user']);
-        }
-        return $dispositions;
+        // if (Auth::user()->role === 'administrator') {
+        //     $dispositions = DispositionRelation::paginate(10)->load(['from_user', 'to_user']);
+        // }
+        $dispositions = DispositionRelation::paginate(10)->load(['from_user', 'to_user']);
+        $setting = Setting::orderBy('id', 'DESC')->get()->first();
+        return view('pages.dispositions')->withDispositionRelations($dispositions)->withSetting($setting);
     }
 
     /**
@@ -39,7 +42,14 @@ class DispositionRelationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $status = Disposition::create([
+            'purpose' => $request->purpose,
+            'content' => $request->content,
+            'description' => $request->description,
+            'done' => false,
+            'reference_number' => $request->reference_number,
+            'letter_type_id' => $request->letter_type_id
+        ]);
     }
 
     /**

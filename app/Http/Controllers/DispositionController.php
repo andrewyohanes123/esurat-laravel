@@ -24,7 +24,7 @@ class DispositionController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**

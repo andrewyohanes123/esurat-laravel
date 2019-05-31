@@ -22,5 +22,6 @@ Route::group(['prefix' => 'dashboard'], function () {
     Route::resource('user', 'UserController');
     Route::resource('disposition', 'DispositionRelationController');
     Route::resource('tipe-surat', 'LetterTypeController');
+    Route::get('pengaturan', 'UserController@edit')->name('setting');
     Route::redirect('/', '/dashboard/home', 301);
 });
