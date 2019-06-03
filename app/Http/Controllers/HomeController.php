@@ -24,6 +24,7 @@ class HomeController extends Controller
     public function index()
     {
         $users = \App\User::count();
-        return view('home', compact('users'));
+        $setting = \App\Setting::orderBy('id', 'DESC')->get()->first();
+        return view('home', compact('users', 'setting'));
     }
 }

@@ -12,7 +12,7 @@ $factory->define(Disposition::class, function (Faker $faker) {
         'purpose' => $faker->text(5),
         'content' => $faker->text(15),
         'description' => $faker->paragraph(1),
-        'reference_number' => $faker->text(8),
+        'reference_number' => $faker->text(9) . $faker->randomLetter,
         'letter_type_id' => $faker->randomElement($types)
     ];
 });

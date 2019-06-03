@@ -6,20 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Disposition extends Model
 {
-    protected $fillable = ['purpose', 'content', 'description', 'reference_number',];
+    protected $fillable = ['purpose', 'content', 'description', 'reference_number', 'letter_type_id'];
 
-    public function users()
-    {
-        return $this->belongsToMany(\App\User::class);
-    }
+    // protected $with = ['letter_type', 'letter_files'];
 
     public function letterFiles()
     {
-        return $this->hasMany(\App\LetterFile::class);
+        return $this->hasMany('App\LetterFile');
     }
 
     public function letterType()
     {
-        return $this->hasOne(\App\LetterType::class);
+        return $this->belongsTo('App\LetterType');
+    }
+
+    public function dispositionRelation()
+    {
+        return $this->hasOne('App\DispositionRelation');
     }
 }

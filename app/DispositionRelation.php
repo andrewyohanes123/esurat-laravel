@@ -22,11 +22,11 @@ class DispositionRelation extends Model
 
     public function disposition()
     {
-        return $this->belongsTo(\App\Disposition::class, 'id', 'disposition_id');
+        return $this->belongsTo(\App\Disposition::class);
     }
 
     public function disposition_message()
     {
-        return $this->hasOne(\App\DispositionMessage::class, 'id', 'disposition_message_id');
+        return $this->belongsTo(\App\DispositionMessage::class);
     }
 }
