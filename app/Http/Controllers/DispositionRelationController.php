@@ -101,10 +101,25 @@ class DispositionRelationController extends Controller
 
         // LetterFile::create([
         //     'name' => $request->file_name,
-        //     'file' => 
+        //     'file' =>
         // ])
     }
 
+    public function forward(Request $request)
+    {
+        $id = Auth::user()->id;
+        $dispositionMessage = DispositionMessage::create([
+            'user_id' => $id,
+            'message' => $request->description
+        ]);
+
+        DispositionRelation::create([
+            'from_user' => $id,
+            'to_user' => $request->to_user,
+            'disposition_id' => $request->disposition_id,
+            'disposition_message_id' => $dispositionMessage->id
+        ]);
+    }
     /**
      * Display the specified resource.
      *
@@ -113,9 +128,27 @@ class DispositionRelationController extends Controller
      */
     public function show($id, $type)
     {
+        $recepients = \App\User::whereHas('department', function($q){
+            $dept = Auth::user()->department->name;
+            if ($dept === 'Jurusan') {
+                $name = 'Administrasi';
+            } else if ($dept === 'Administrasi') {
+                $name = 'Kepala Bagian Umum';
+            } else if ($dept === 'Kepala Bagian Umum') {
+                $name = 'Direktur';
+            } else if ($dept === 'Direktur') {
+                $name = 'Sekretaris Pimpinan';
+            } else if ($dept === 'Sekretaris Pimpinan') {
+                $name = 'Wakil Direktur';
+            } else if ($dept === 'Wakil Direktur') {
+                $name = 'Jurusan';
+            }
+
+            $q->where('name', '=', $name);
+        })->get();
         $disposition = Disposition::findOrfail($id);
         $setting = Setting::orderBy('id', 'DESC')->get()->first();
-        return view('pages.disposition-show', compact('type'))->withDisposition($disposition)->withSetting($setting);
+        return view('pages.disposition-show', compact('type'))->withDisposition($disposition)->withSetting($setting)->withUsers($recepients);
     }
 
     /**

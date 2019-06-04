@@ -14,7 +14,7 @@
             @slot('title', $d->disposition->reference_number)
             @slot('id', $d->disposition->id)
             @slot('type', $type)
-            <p class="text-muted m-0"><i class="fa fa-paper-plane fa-lg"></i>&nbsp;Dikirim ke : {{ $d->to_user()->first()->name }}</p>
+            <p class="text-muted m-0"><i class="fa fa-paper-plane fa-lg"></i>&nbsp;Dikirim ke : {{ $d->to_user()->first()->name }} dari : {{ $d->from_user()->first()->name }}</p>
             <h4 class="my-2"><span class="badge badge-danger">{{ $d->disposition->letterType()->get()->first()->name }}</span></h4>
             <p class="my-2">{{ Str::limit($d->disposition_message->message, 40) }}</p>
             <hr>            
