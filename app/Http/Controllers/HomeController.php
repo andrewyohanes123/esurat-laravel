@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -25,6 +26,8 @@ class HomeController extends Controller
     {
         $users = \App\User::count();
         $setting = \App\Setting::orderBy('id', 'DESC')->get()->first();
-        return view('home', compact('users', 'setting'));
+        $in = \App\DispositionRelation::where('to_user', Auth::user()->id)->count();
+        $out = \App\DispositionRelation::where('from_user', Auth::user()->id)->count();
+        return view('home', compact('users', 'setting', 'in', 'out'));
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Department;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +16,27 @@ use Illuminate\Http\Request;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::group(['middleware' => 'api_token'], function () {
+   Route::get('/departments', function(){
+       $depts = Department::all();
+       return response()->json($depts);
+   });
+   Route::get('/departments/{id}', function($id){
+       $dept = Department::findOrFail($id);
+       return response()->json($dept);
+   });
+   Route::put('/department/{id}', function($id, Request $request){
+       $status = Department::whereId($id)->update(['permissions' => serialize($request->permissions)]);
+       if ($status) {
+           return response()->json(['msg' => 'OK', 'status' => true]);
+        } else {
+            return response()->json(['msg' => 'Error', 'status' => false]);
+       }
+   });
+   Route::get('setting', function(){
+       $setting = \App\Setting::orderBy('id', 'DESC')->get()->first();
+       return response()->json($setting);
+   });
 });

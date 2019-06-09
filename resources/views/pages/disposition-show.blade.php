@@ -33,6 +33,7 @@
           @endforeach
         </div>
     @endcomponent
+    @if (Auth::user()->department->permissions['forward.' . $type])
     @component('components.card')
         @slot('title', 'Kirim Disposisi Ke')
         <div class="row">
@@ -53,4 +54,5 @@
           </div>
         </div>
     @endcomponent
+    @endif
 @endsection

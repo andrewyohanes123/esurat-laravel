@@ -6,6 +6,8 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>@yield('title')</title>
   <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="user-token" content="{{ Auth::user()->api_token }}" />
 </head>
 <body>
   <nav class="navbar navbar-dark fixed-top bg-primary flex-md-nowrap p-0 shadow">
@@ -49,5 +51,6 @@
       </main>
     </div>
   </div>
+  <script src="{{ mix('js/app.js') }}"></script>
 </body>
 </html>

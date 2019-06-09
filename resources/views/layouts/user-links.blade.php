@@ -1,6 +1,6 @@
 <ul class="nav flex-column">
     <li class="nav-item"><a href="{{ route('home') }}" class="nav-link {{ Route::currentRouteName() === 'home' ? 'active' : '' }}"><i class="fa fa-tachometer-alt fa-lg"></i>&nbsp;Dashboard</a></li>
-    @foreach (unserialize($setting->users_allow_create_disposition) as $user)
+    @foreach ($setting->users_allow_create_disposition as $user)
         @if ($user === Auth::user()->department_id)
           <li class="nav-item"></li><a href="{{ route('disposition.create') }}" class="nav-link {{ Route::currentRouteName() === 'disposition.create' ? 'active' : '' }}"><i class="fa fa-envelope-open fa-lg"></i>&nbsp;Buat Surat</a>
         @endif

@@ -77,7 +77,28 @@ class DispositionRelationController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'purpose' => 'required',
+            'content' => 'nullable',
+            'description' => 'required',
+            'reference_number' => 'required',
+            'letter_type_id' => 'required',
+            'to_user' => 'required',
+            'name' => 'nullable',
+            'file.*' => 'required',
+            'file.*' => 'mimes:jpg,png,jpeg,gif,bmp'
+        ], [
+            'purpose.required' => 'Masukkan tujuan surat',
+            'description.required' => 'Masukkan deskripsi surat',
+            'to_user.required' => 'Pilih penerima disposisi',
+            'letter_type_id.required' => 'Pilih tipe surat',
+            'reference_number.required' => 'Masukkan nomor surat',
+            'file.*.required' => 'Masukkan file',
+            'file.*.mimes' => 'File surat harus berformat jpg, png atau jpeg'
+        ]);
+
         $id = Auth::user()->id;
+
         $disposition = Disposition::create([
             'purpose' => $request->purpose,
             'content' => $request->description,
@@ -92,7 +113,7 @@ class DispositionRelationController extends Controller
             'message' => $request->description
         ]);
 
-        DispositionRelation::create([
+        $status = DispositionRelation::create([
             'from_user' => $id,
             'to_user' => $request->to_user,
             'disposition_id' => $disposition->id,
@@ -103,6 +124,7 @@ class DispositionRelationController extends Controller
         //     'name' => $request->file_name,
         //     'file' =>
         // ])
+        return redirect()->route('disposition.create');
     }
 
     public function forward(Request $request)

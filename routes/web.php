@@ -16,6 +16,7 @@ Route::get('/', function () {
 })->middleware('guest');
 
 Auth::routes();
+Route::resource('department', 'DepartmentController');
 
 Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index')->name('home');
@@ -26,6 +27,9 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
     Route::get('disposisi/surat/{id}/{type}', 'DispositionRelationController@show')->name('disposition.showtype');
     Route::post('disposisi', 'DispositionRelationController@forward')->name('disposition.forward');
     Route::resource('tipe-surat', 'LetterTypeController');
+    Route::get('/hak-akses', function () {
+        return view('pages.privilleges');
+    })->name('privilleges');
     Route::get('pengaturan', 'UserController@edit')->name('setting');
     Route::redirect('/', '/dashboard/home', 301);
 });
