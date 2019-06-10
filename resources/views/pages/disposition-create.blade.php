@@ -7,8 +7,13 @@
         @slot('title')
             <i class="fa fa-envelope-open fa-lg"></i>&nbsp;Buat Surat
         @endslot
-        <form action="{{ route('disposition.store') }}" method="POST" class="form-group">
+        <form action="{{ route('disposition.store') }}" method="POST" enctype="multipart/form-data" class="form-group">
             @csrf
+            @if(session('success'))
+            <div class="alert alert-success">{{ $message }}</div>
+            @elseif(session('failed'))
+            <div class="alert alert-danger">{{ $message }}</div>
+            @endif
             <div class="row">
                 <div class="col-md-6">
                     <label for="" class="control-label my-2">Nomor Surat</label>
@@ -23,7 +28,7 @@
                     @enderror
                     <label for="" class="control-label my-2">Tipe Surat</label>
                     <select name="letter_type_id" id="" class="form-control @error('letter_type_id') is-invalid @enderror">
-                        <option value="" selected>-- Pilih Tipe Surat --</option>
+                        <option value="">-- Pilih Tipe Surat --</option>
                         @foreach ($letterTypes as $type)
                         <option {{ old('letter_type_id') === $type->id ? 'selected' : '' }} value="{{ $type->id }}">{{ $type->name }}</option>
                         @endforeach
@@ -40,7 +45,7 @@
                 <div class="col-md-6">
                     <label for="" class="control-label my-2">Dikirim Ke</label>
                     <select name="to_user" id="" class="form-control @error('to_user') is-invalid @enderror">
-                        <option value="" selected>-- Pilih Penerima Surat --</option>
+                        <option value="">-- Pilih Penerima Surat --</option>
                         @foreach ($users as $user)
                         <option {{ old('to_user') === $type->id ? 'selected' : '' }} value="{{ $user->id }}">{{ $user->name }} - {{ $user->department->name }}</option>
                         @endforeach
@@ -51,7 +56,7 @@
                     {{-- <label for="" class="control-label my-2">Nama File</label>
                     <input type="text" name="file_name" placeholder="Nama File" class="form-control"> --}}
                     <label for="" class="control-label my-2">File Surat</label>
-                    <input type="file" class="form-control @error('file.*') is-invalid @enderror" name="file[]" id="">
+                    <input type="file" class="form-control @error('file.*') is-invalid @enderror" name="file[]" multiple id="">
                     @error('file.*')
                         <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                     @enderror

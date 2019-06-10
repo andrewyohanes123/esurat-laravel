@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Disposisi : ')
+@section('title', 'Disposisi : ' . $disposition->reference_number)
 
 @section('content')
     <ol class="breadcrumb">
@@ -19,12 +19,15 @@
         <label for="" class="control-label my-2">Pesan Disposisi dari {{ $disposition->dispositionRelation->disposition_message->user()->get()->first()->name }}</label>
         <textarea class="form-control" style="resize: none" readonly>{{ $disposition->dispositionRelation->disposition_message->message }}</textarea>
         <hr>
-        <p class="small text-muted m-0">Attachment</p>
+        <p class="small text-muted m-0">Lampiran</p>
+        @if (sizeof($disposition->letterFiles()->get()) === 0)
+            <h5 class="my-2 d-inline-block"><span class="badge rounded-pill badge-dark p-2">Tidak ada lampiran</span></h5>
+        @endif
         <div class="row">
           @foreach ($disposition->letterFiles()->get() as $file)
               <div class="col-md-2">
                 <div class="card border-0 shadow-sm">
-                  <img src="{{ asset('img/' . $file->file) }}" class="card-img-top" alt="">
+                  <img src="{{ Storage::url('attachments/' . $file->file) }}" class="card-img-top" alt="">
                   @if ($file->name !== '')
                     <div class="card-body p-1">{{ $file->name }}</div>
                   @endif
@@ -38,7 +41,7 @@
         @slot('title', 'Kirim Disposisi Ke')
         <div class="row">
           <div class="col-md-6">
-            <form action="{{ route('disposition.forward') }}" method="POST" class="form-group">
+            <form action="{{ route('disposition.forward', ['type' => $type, 'id' => $disposition->id]) }}" method="POST" class="form-group">
                 @csrf
                 <select name="to_user" id="" class="form-control">
                     <option value="">-- Pilih pengguna --</option>
@@ -47,6 +50,7 @@
                     @endforeach
                 </select>
                 <label for="" class="control-label my-2">Pesan Tambahan</label>
+                <input type="hidden" value="{{ $disposition->id }}" name="disposition_id">
                 <textarea name="message" id="" rows="7" class="form-control" placeholder="Pesan Disposisi"></textarea>
                 <hr>
                 <button class="btn btn-outline-success">Kirim</button>

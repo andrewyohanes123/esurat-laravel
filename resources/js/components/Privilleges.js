@@ -17,7 +17,9 @@ export default class Privilleges extends Component {
             dept: {
                 permissions: {},
                 id : 0
-            }
+            },
+            id_disposition : "",
+            id_outbox : "",
         }
 
         this.getDepts = this.getDepts.bind(this);
@@ -45,7 +47,7 @@ export default class Privilleges extends Component {
     }
 
     onSelectDept(ev) {
-        this.setState({ id: ev.target.value }, this.getDept);
+        this.setState({ [event.target.name]: ev.target.value }, this.state.id ? this.getDept : () => console.log('changed'));
     }
 
     onCheckboxClick(ev) {
@@ -68,7 +70,8 @@ export default class Privilleges extends Component {
                 <CardBody>
                     <Row>
                         <Col md="6" lg={6}>
-                            <select name="" onChange={this.onSelectDept.bind(this)} value={this.state.id} className="form-control" id="">
+                            <label htmlFor="" className="control-label my-2">Hak akses/jabatan</label>
+                            <select name="id" onChange={this.onSelectDept.bind(this)} value={this.state.id} className="form-control" id="">
                                 <option value="">-- Pilih Jabatan --</option>
                                 {this.state.depts.map(dept => <option key={dept.id} value={dept.id}>{dept.name}</option>)}
                             </select>
@@ -77,11 +80,11 @@ export default class Privilleges extends Component {
                         </Col>
                         <Col md={6} lg={6}>
                             <label className="my-2">Buat Disposisi</label>
-                            <select name="" onChange={this.onSelectDept.bind(this)} value={this.state.id} className="form-control" id="">
+                            <select name="id_disposition" onChange={this.onSelectDept.bind(this)} value={this.state.id_disposition} className="form-control" id="">
                                 <option value="">-- Pilih Jabatan --</option>
-                                {/* {this.state.depts.map(dept => <option key={dept.id} value={dept.id}>{dept.name}</option>)} */}
                                 {depts.filter(dept => (!setting.users_allow_create_disposition.includes(dept.id))).map(dept => (<option value={dept.id} key={dept.id}>{dept.name}</option>))}
                             </select>
+                            <hr/>
                             <Table bordered hover striped>
                                 <thead>
                                     <tr>
@@ -98,11 +101,25 @@ export default class Privilleges extends Component {
                             </Table>
                             <hr/>
                             <label className="my-2">Buat Surat Keluar</label>
-                            <select name="" onChange={this.onSelectDept.bind(this)} value={this.state.id} className="form-control" id="">
+                            <select name="id_outbox" onChange={this.onSelectDept.bind(this)} value={this.state.id_outbox} className="form-control" id="">
                                 <option value="">-- Pilih Jabatan --</option>
-                                {/* {this.state.depts.map(dept => <option key={dept.id} value={dept.id}>{dept.name}</option>)} */}
                                 {depts.filter(dept => (!setting.users_allow_create_outbox.includes(dept.id))).map(dept => (<option value={dept.id} key={dept.id}>{dept.name}</option>))}
                             </select>
+                            <hr/>
+                            <Table bordered hover striped>
+                                <thead>
+                                    <tr>
+                                        <th>Jabatan</th>
+                                        <th>Hapus</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {depts.filter(dept => (setting.users_allow_create_outbox.includes(dept.id))).map(dept => (<tr key={dept.id}>
+                                    <td>{dept.name}</td>
+                                    <td><Button color="danger" size="sm"><i className="fa fa-trash fa-lg"></i></Button></td>
+                                    </tr>))}
+                                </tbody>
+                            </Table>
                         </Col>
                     </Row>
                 </CardBody>

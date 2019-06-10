@@ -25,7 +25,7 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
     Route::get('disposisi/keluar', 'DispositionRelationController@out_disposition')->name('disposition.out');
     Route::get('disposisi/masuk', 'DispositionRelationController@in_disposition')->name('disposition.in');
     Route::get('disposisi/surat/{id}/{type}', 'DispositionRelationController@show')->name('disposition.showtype');
-    Route::post('disposisi', 'DispositionRelationController@forward')->name('disposition.forward');
+    Route::post('disposisi/{type}/{id}', 'DispositionRelationController@forward')->name('disposition.forward');
     Route::resource('tipe-surat', 'LetterTypeController');
     Route::get('/hak-akses', function () {
         return view('pages.privilleges');

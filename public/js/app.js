@@ -74362,6 +74362,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -74404,7 +74406,9 @@ function (_Component) {
       dept: {
         permissions: {},
         id: 0
-      }
+      },
+      id_disposition: "",
+      id_outbox: ""
     };
     _this.getDepts = _this.getDepts.bind(_assertThisInitialized(_this));
     _this.getDept = _this.getDept.bind(_assertThisInitialized(_this));
@@ -74459,9 +74463,9 @@ function (_Component) {
   }, {
     key: "onSelectDept",
     value: function onSelectDept(ev) {
-      this.setState({
-        id: ev.target.value
-      }, this.getDept);
+      this.setState(_defineProperty({}, event.target.name, ev.target.value), this.state.id ? this.getDept : function () {
+        return console.log('changed');
+      });
     }
   }, {
     key: "onCheckboxClick",
@@ -74493,8 +74497,11 @@ function (_Component) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactstrap__WEBPACK_IMPORTED_MODULE_1__["Card"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactstrap__WEBPACK_IMPORTED_MODULE_1__["CardBody"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactstrap__WEBPACK_IMPORTED_MODULE_1__["Row"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactstrap__WEBPACK_IMPORTED_MODULE_1__["Col"], {
         md: "6",
         lg: 6
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
-        name: "",
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "",
+        className: "control-label my-2"
+      }, "Hak akses/jabatan"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
+        name: "id",
         onChange: this.onSelectDept.bind(this),
         value: this.state.id,
         className: "form-control",
@@ -74514,9 +74521,9 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         className: "my-2"
       }, "Buat Disposisi"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
-        name: "",
+        name: "id_disposition",
         onChange: this.onSelectDept.bind(this),
-        value: this.state.id,
+        value: this.state.id_disposition,
         className: "form-control",
         id: ""
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
@@ -74528,7 +74535,7 @@ function (_Component) {
           value: dept.id,
           key: dept.id
         }, dept.name);
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactstrap__WEBPACK_IMPORTED_MODULE_1__["Table"], {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("hr", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactstrap__WEBPACK_IMPORTED_MODULE_1__["Table"], {
         bordered: true,
         hover: true,
         striped: true
@@ -74546,9 +74553,9 @@ function (_Component) {
       }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("hr", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         className: "my-2"
       }, "Buat Surat Keluar"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
-        name: "",
+        name: "id_outbox",
         onChange: this.onSelectDept.bind(this),
-        value: this.state.id,
+        value: this.state.id_outbox,
         className: "form-control",
         id: ""
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
@@ -74560,7 +74567,22 @@ function (_Component) {
           value: dept.id,
           key: dept.id
         }, dept.name);
-      }))))));
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("hr", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactstrap__WEBPACK_IMPORTED_MODULE_1__["Table"], {
+        bordered: true,
+        hover: true,
+        striped: true
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Jabatan"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Hapus"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, depts.filter(function (dept) {
+        return setting.users_allow_create_outbox.includes(dept.id);
+      }).map(function (dept) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+          key: dept.id
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, dept.name), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactstrap__WEBPACK_IMPORTED_MODULE_1__["Button"], {
+          color: "danger",
+          size: "sm"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+          className: "fa fa-trash fa-lg"
+        }))));
+      })))))));
     }
   }]);
 

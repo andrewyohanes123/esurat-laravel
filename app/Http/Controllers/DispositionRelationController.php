@@ -77,6 +77,7 @@ class DispositionRelationController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->hasFile('attachment'));
         $this->validate($request, [
             'purpose' => 'required',
             'content' => 'nullable',
@@ -85,7 +86,7 @@ class DispositionRelationController extends Controller
             'letter_type_id' => 'required',
             'to_user' => 'required',
             'name' => 'nullable',
-            'file.*' => 'required',
+            'file' => 'required',
             'file.*' => 'mimes:jpg,png,jpeg,gif,bmp'
         ], [
             'purpose.required' => 'Masukkan tujuan surat',
@@ -93,11 +94,12 @@ class DispositionRelationController extends Controller
             'to_user.required' => 'Pilih penerima disposisi',
             'letter_type_id.required' => 'Pilih tipe surat',
             'reference_number.required' => 'Masukkan nomor surat',
-            'file.*.required' => 'Masukkan file',
+            'file.required' => 'Masukkan file',
             'file.*.mimes' => 'File surat harus berformat jpg, png atau jpeg'
         ]);
 
         $id = Auth::user()->id;
+
 
         $disposition = Disposition::create([
             'purpose' => $request->purpose,
@@ -120,19 +122,30 @@ class DispositionRelationController extends Controller
             'disposition_message_id' => $dispositionMessage->id
         ]);
 
-        // LetterFile::create([
-        //     'name' => $request->file_name,
-        //     'file' =>
-        // ])
-        return redirect()->route('disposition.create');
+        if ($request->hasFile('file'))
+        {
+            foreach($request->file('file') as $file) :
+                $filename = $file->getClientOriginalName();
+                $name = pathinfo($filename, PATHINFO_FILENAME);
+                $ext = $file->getClientOriginalExtension();
+                $attachment = $filename . "_" . time() . "." . $ext;
+                $file->storeAs('public/attachments', $attachment);
+                LetterFile::create([
+                    'name' => $name,
+                    'file' => $attachment,
+                    'disposition_id' => $disposition->id
+                ]);
+            endforeach;
+        }
+        return $status ? redirect()->route('disposition.create')->with('success', 'Berhasil mengirim surat') : redirect()->route('disposition.create')->with('failed', 'Gagal mengirim surat');
     }
 
-    public function forward(Request $request)
+    public function forward(Request $request, $type, $id)
     {
         $id = Auth::user()->id;
         $dispositionMessage = DispositionMessage::create([
             'user_id' => $id,
-            'message' => $request->description
+            'message' => $request->message
         ]);
 
         DispositionRelation::create([
@@ -141,6 +154,8 @@ class DispositionRelationController extends Controller
             'disposition_id' => $request->disposition_id,
             'disposition_message_id' => $dispositionMessage->id
         ]);
+
+        return redirect()->route('disposition.showtype', compact('id', 'type'));
     }
     /**
      * Display the specified resource.
