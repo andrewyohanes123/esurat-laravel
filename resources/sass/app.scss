@@ -8,6 +8,10 @@
 @import './fontawesome-free/css/all.min.css';
 @import './dashboard.css';
 
+.navbar-nav {
+    flex-direction: row !important;
+}
+
 html,
 .body {
   height: 100%;

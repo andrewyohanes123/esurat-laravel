@@ -10772,6 +10772,10 @@ a.text-dark:focus {
   }
 }
 
+.navbar-nav {
+  flex-direction: row !important;
+}
+
 html,
 .body {
   height: 100%;

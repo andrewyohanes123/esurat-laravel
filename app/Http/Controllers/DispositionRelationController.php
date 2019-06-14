@@ -142,20 +142,21 @@ class DispositionRelationController extends Controller
 
     public function forward(Request $request, $type, $id)
     {
-        $id = Auth::user()->id;
+        $idUser = Auth::user()->id;
+        $user = \App\User::findOrFail($request->to_user);
         $dispositionMessage = DispositionMessage::create([
             'user_id' => $id,
             'message' => $request->message
         ]);
 
         DispositionRelation::create([
-            'from_user' => $id,
+            'from_user' => $idUser,
             'to_user' => $request->to_user,
             'disposition_id' => $request->disposition_id,
             'disposition_message_id' => $dispositionMessage->id
         ]);
 
-        return redirect()->route('disposition.showtype', compact('id', 'type'));
+        return redirect()->route('disposition.showtype', compact('id', 'type'))->with('success', 'Berhasil didisposisi ke ' . $user->name);
     }
     /**
      * Display the specified resource.
@@ -176,12 +177,12 @@ class DispositionRelationController extends Controller
             } else if ($dept === 'Direktur') {
                 $name = 'Sekretaris Pimpinan';
             } else if ($dept === 'Sekretaris Pimpinan') {
-                $name = 'Wakil Direktur';
+                $name = 'Wakil Direktur%';
             } else if ($dept === 'Wakil Direktur') {
                 $name = 'Jurusan';
             }
 
-            $q->where('name', '=', $name);
+            $q->where('name', 'LIKE', $name);
         })->get();
         $disposition = Disposition::findOrfail($id);
         $setting = Setting::orderBy('id', 'DESC')->get()->first();

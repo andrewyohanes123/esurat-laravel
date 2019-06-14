@@ -47,7 +47,7 @@ export default class Privilleges extends Component {
     }
 
     onSelectDept(ev) {
-        this.setState({ [event.target.name]: ev.target.value }, this.state.id ? this.getDept : () => console.log('changed'));
+        this.setState({ [event.target.name]: ev.target.value }, this.state.id === "" ? this.getDept : () => console.log('changed'));
     }
 
     onCheckboxClick(ev) {

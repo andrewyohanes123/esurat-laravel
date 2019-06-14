@@ -12,15 +12,24 @@
 <body>
   <nav class="navbar navbar-dark fixed-top bg-primary flex-md-nowrap p-0 shadow">
     <a class="navbar-brand p-2 col-sm-3 col-md-2 mr-0" href="#">e-Surat</a>
-    <ul class="navbar-nav px-3">
-      <li class="nav-item text-nowrap">
-          <a class="nav-link" href="{{ route('logout') }}"
-              onclick="event.preventDefault();
+    <ul class="navbar-nav ml-auto">
+        @if (Auth::user()->role === 'employee')
+        <li class="nav-item dropdown text-nowrap px-3">
+            <a href="javascript:void(0)" class="nav-link"><i class="fa fa-bell fa-lg dropdown-toggle" data-toggle="dropdown"></i></a>
+            <div class="dropdown-menu">
+                <a href="#" class="dropdown-item">Testing</a>
+            </div>
+        </li>
+        @endif
+        <li class="nav-item text-nowrap px-3">
+            <a class="nav-link" href="{{ route('logout') }}"
+                onclick="event.preventDefault();
                             document.getElementById('logout-form').submit();">
-              {{ __('Logout') }}
-          </a>
-      </li>
+                {{ __('Logout') }}
+            </a>
+        </li>
     </ul>
+    {{-- </div> --}}
     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
         @csrf
     </form>

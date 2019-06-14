@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Notification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\User;
-use App\Department;
 
-class UserController extends Controller
+class NotificationController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,8 +14,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::paginate(10);
-        return view('pages.users')->withUsers($users);
+        //
     }
 
     /**
@@ -27,8 +24,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        $depts = Department::all();
-        return view('pages.user-create')->withDepartments($depts);
+        //
     }
 
     /**
@@ -39,50 +35,39 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'role' => 'employee',
-            'department_id' => $request->department_id
-        ]);
-
-        if ($user) return redirect()->route('user.index');
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Notification  $notification
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Notification $notification)
     {
-        $user = User::findOrFail($id);
-        $depts = \App\Department::all();
-        return view('pages.user-show')->withUser($user)->withDepartments($depts);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Notification  $notification
      * @return \Illuminate\Http\Response
      */
-    public function edit()
+    public function edit(Notification $notification)
     {
-        $user = Auth::user();
-        return view('pages.user-edit')->withUser($user);
+        //
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Notification  $notification
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Notification $notification)
     {
         //
     }
@@ -90,10 +75,10 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Notification  $notification
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Notification $notification)
     {
         //
     }

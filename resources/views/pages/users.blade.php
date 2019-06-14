@@ -30,7 +30,7 @@
                 <td>{{ $user->role }}</td>
                 <td>{{ $user->department->name }}</td>
                 <td>
-                  <button class="btn btn-warning btn-sm">Edit</button>
+                  <a href="{{ route('user.show', ['id' => $user->id]) }}" class="btn btn-warning btn-sm">Edit</a>
                   <button class="btn btn-danger btn-sm">Hapus</button>
                 </td>
               </tr>

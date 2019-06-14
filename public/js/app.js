@@ -74463,7 +74463,7 @@ function (_Component) {
   }, {
     key: "onSelectDept",
     value: function onSelectDept(ev) {
-      this.setState(_defineProperty({}, event.target.name, ev.target.value), this.state.id ? this.getDept : function () {
+      this.setState(_defineProperty({}, event.target.name, ev.target.value), this.state.id === "" ? this.getDept : function () {
         return console.log('changed');
       });
     }

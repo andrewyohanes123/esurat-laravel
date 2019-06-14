@@ -8,6 +8,9 @@
     </ol>
     @component('components.card')
         @slot('title', $disposition->reference_number)
+        @if (session('success'))
+
+        @endif
         <h5 class=" m-0"><span class="badge badge-primary badge-lg">{{ $disposition->dispositionRelation->from_user()->first()->name }}</span>
           <i class="fa fa-angle-right fa-md"></i>
         <span class="badge badge-success badge-lg">{{ $disposition->dispositionRelation->to_user()->first()->name }}</span>

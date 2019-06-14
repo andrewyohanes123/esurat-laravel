@@ -3,6 +3,9 @@
 @section('title', 'Tambah Pengguna')
 
 @section('content')
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('user.index') }}">Kembali</a></li>
+    </ol>
   <div class="card">
     <div class="card-body">
       <h5 class="m-0">Tambah Pengguna</h5>
