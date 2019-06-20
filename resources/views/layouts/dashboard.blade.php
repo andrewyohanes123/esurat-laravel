@@ -14,12 +14,7 @@
     <a class="navbar-brand p-2 col-sm-3 col-md-2 mr-0" href="#">e-Surat</a>
     <ul class="navbar-nav ml-auto">
         @if (Auth::user()->role === 'employee')
-        <li class="nav-item dropdown text-nowrap px-3">
-            <a href="javascript:void(0)" class="nav-link"><i class="fa fa-bell fa-lg dropdown-toggle" data-toggle="dropdown"></i></a>
-            <div class="dropdown-menu">
-                <a href="#" class="dropdown-item">Testing</a>
-            </div>
-        </li>
+        <div id="notification"></div>
         @endif
         <li class="nav-item text-nowrap px-3">
             <a class="nav-link" href="{{ route('logout') }}"

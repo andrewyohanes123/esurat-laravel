@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use App\Department;
+use App\DispositionRelation;
+use App\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +36,12 @@ Route::group(['middleware' => 'api_token'], function () {
         } else {
             return response()->json(['msg' => 'Error', 'status' => false]);
        }
+   });
+   Route::get('/notifications', function (Request $request){
+       $user = User::where('api_token', $request->header('USER-TOKEN'))->get()->first();
+       $notifications = DispositionRelation::where('to_user', $user->id)->take(10)->get()->load(['from_user', 'to_user', 'disposition_message', 'disposition']);
+       return ['data' => $notifications, 'count' => $notifications->count()];
+    //    return ['token' => $request->header('USER-TOKEN')];
    });
    Route::get('setting', function(){
        $setting = \App\Setting::orderBy('id', 'DESC')->get()->first();
