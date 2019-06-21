@@ -142,6 +142,14 @@ class DispositionRelationController extends Controller
 
     public function forward(Request $request, $type, $id)
     {
+        $this->validate($request, [
+            'message' => 'required|min:10',
+            'to_user' => 'required'
+        ], [
+            'message.required' => 'Masukkan pesan disposisi',
+            'to_user.required' => 'Pilih penerima disposisi'
+        ]);
+
         $idUser = Auth::user()->id;
         $user = \App\User::findOrFail($request->to_user);
         $dispositionMessage = DispositionMessage::create([
@@ -186,9 +194,9 @@ class DispositionRelationController extends Controller
 
             $q->where('name', 'LIKE', $name)->orWhere('name', 'LIKE', $or);
         })->get();
-        $disposition = Disposition::findOrfail($id);
+        $disposition = DispositionRelation::findOrfail($id)->load(['from_user', 'to_user']);
         $setting = Setting::orderBy('id', 'DESC')->get()->first();
-        return view('pages.disposition-show', compact('type'))->withDisposition($disposition)->withSetting($setting)->withUsers($recepients);
+        return view('pages.disposition-show', compact('type'))->withDispositionRelation($disposition)->withSetting($setting)->withUsers($recepients);
     }
 
     /**

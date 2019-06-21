@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import {UncontrolledDropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
+import {FaBell} from 'react-icons/fa'
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import moment from 'moment';
@@ -31,9 +32,15 @@ export default class Notifications extends Component {
         <>
         <UncontrolledDropdown nav>
             <DropdownToggle nav>
-                Notifikasi
+                <FaBell />
             </DropdownToggle>
             <DropdownMenu className="shadow-sm" right>
+                {this.state.notifications.length === 0 && 
+                <DropdownItem disabled>
+                    <p className="text-center text-muted m-0">Tidak ada notifikasi</p>
+                    <p className="small m-0">Silahkan periksa kembali</p>
+                </DropdownItem>
+                }
                 { this.state.notifications.map(notif => (<DropdownItem key={notif.id}>
                     <h6 className="m-0">Disposisi Baru</h6>
                     {/* <hr/> */}

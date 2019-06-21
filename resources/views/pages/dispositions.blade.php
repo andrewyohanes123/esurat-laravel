@@ -17,7 +17,7 @@
     @foreach ($dispositionRelations as $d)
         @component('components.disposition-card')
             @slot('title', $d->disposition->reference_number)
-            @slot('id', $d->disposition->id)
+            @slot('id', $d->id)
             @slot('type', $type)
             <p class="text-muted m-0"><i class="fa fa-paper-plane fa-lg"></i>&nbsp;Dikirim ke : {{ $d->to_user()->first()->name }} dari : {{ $d->from_user()->first()->name }}</p>
             <h4 class="my-2"><span class="badge badge-danger">{{ $d->disposition->letterType()->get()->first()->name }}</span></h4>
