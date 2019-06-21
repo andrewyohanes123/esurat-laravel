@@ -168,21 +168,23 @@ class DispositionRelationController extends Controller
     {
         $recepients = \App\User::whereHas('department', function($q){
             $dept = Auth::user()->department->name;
+            $or = '';
             if ($dept === 'Jurusan') {
                 $name = 'Administrasi';
             } else if ($dept === 'Administrasi') {
                 $name = 'Kepala Bagian Umum';
             } else if ($dept === 'Kepala Bagian Umum') {
                 $name = 'Direktur';
+                $or = 'Kepala Sub Bagian Umum';
             } else if ($dept === 'Direktur') {
                 $name = 'Sekretaris Pimpinan';
             } else if ($dept === 'Sekretaris Pimpinan') {
                 $name = 'Wakil Direktur%';
-            } else if ($dept === 'Wakil Direktur') {
-                $name = 'Jurusan';
+            } else if ($dept === 'Wakil Direktur 1' || $dept === 'Wakil Direktur 2' || $dept === 'Wakil Direktur 3') {
+                $name = 'Kepala Bagian Umum';
             }
 
-            $q->where('name', 'LIKE', $name);
+            $q->where('name', 'LIKE', $name)->orWhere('name', 'LIKE', $or);
         })->get();
         $disposition = Disposition::findOrfail($id);
         $setting = Setting::orderBy('id', 'DESC')->get()->first();

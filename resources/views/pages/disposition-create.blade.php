@@ -9,11 +9,11 @@
         @endslot
         <form action="{{ route('disposition.store') }}" method="POST" enctype="multipart/form-data" class="form-group">
             @csrf
-            @if(session('success'))
+            {{-- @if(session('success'))
             <div class="alert alert-success">{{ $message }}</div>
             @elseif(session('failed'))
             <div class="alert alert-danger">{{ $message }}</div>
-            @endif
+            @endif --}}
             <div class="row">
                 <div class="col-md-6">
                     <label for="" class="control-label my-2">Nomor Surat</label>

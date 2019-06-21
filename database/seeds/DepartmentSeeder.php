@@ -113,7 +113,17 @@ class DepartmentSeeder extends Seeder
                     'forward.out' => false,
                 ])
                 // 'permissions' => []
-            ]
+            ],
+            [
+                'name' => 'Kepala Sub Bagian Umum',
+                'permissions' => serialize([
+                    'view' => true,
+                    'edit' => false,
+                    'forward.in' => false,
+                    'forward.out' => false,
+                ])
+                // 'permissions' => []
+            ],
         ]);
     }
 }

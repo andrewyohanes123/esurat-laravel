@@ -22,6 +22,7 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('1234'),
                 'role' => 'employee',
                 'department_id' => $dept->id,
+                'api_token' => Str::random()
             ]);
         endforeach;
     }

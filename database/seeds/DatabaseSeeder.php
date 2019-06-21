@@ -26,19 +26,24 @@ class DatabaseSeeder extends Seeder
         //     ['name' => 'File 2', 'file' => '2.jpg'],
         //     ['name' => 'File 3', 'file' => '3.jpg']
         // ]);
-        // $this->call(DepartmentSeeder::class);
-        // $this->call(SettingSeeder::class);
-        $ids = User::all()->pluck('id')->toArray();
-        foreach($ids as $id):
-            User::whereId($id)->update(['api_token' => Str::random(60)]);
-        endforeach;
-        // User::create([
-        //     'name' => 'Administrator',
-        //     'email' => 'admin@a.com',
-        //     'password' => bcrypt('1234'),
-        //     'department_id' => 1,
-        //     'role' => 'administrator'
+        $this->call(DepartmentSeeder::class);
+        $this->call(SettingSeeder::class);
+        // $this->call(LetterTypesSeeder::class);
+        // $ids = User::all()->pluck('id')->toArray();
+        // foreach($ids as $id):
+        //     User::whereId($id)->update(['api_token' => Str::random(60)]);
+        // endforeach;
+        // \App\LetterType::insert([
+        //     ['name' => 'Penting'],
+        //     ['name' => 'Sangat Penting'],
         // ]);
-        // $this->call(UsersTableSeeder::class);
+        User::create([
+            'name' => 'Administrator',
+            'email' => 'admin@a.com',
+            'password' => bcrypt('1234'),
+            'department_id' => 11,
+            'role' => 'administrator'
+        ]);
+        $this->call(UserSeeder::class);
     }
 }
