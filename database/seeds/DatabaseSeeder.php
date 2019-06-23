@@ -33,16 +33,17 @@ class DatabaseSeeder extends Seeder
         // foreach($ids as $id):
         //     User::whereId($id)->update(['api_token' => Str::random(60)]);
         // endforeach;
-        // \App\LetterType::insert([
-        //     ['name' => 'Penting'],
-        //     ['name' => 'Sangat Penting'],
-        // ]);
+        \App\LetterType::insert([
+            ['name' => 'Penting'],
+            ['name' => 'Sangat Penting'],
+        ]);
         User::create([
             'name' => 'Administrator',
             'email' => 'admin@a.com',
             'password' => bcrypt('1234'),
             'department_id' => 11,
-            'role' => 'administrator'
+            'role' => 'administrator',
+            'api_token' => Str::random(20)
         ]);
         $this->call(UserSeeder::class);
     }

@@ -19,6 +19,8 @@
         {{ $dispositionRelation->disposition->letter_type }}
         </h5>
         <h4 class="text-muted m-0">{{ $dispositionRelation->disposition->letterType()->get()->first()->name }}</h4>
+        <code>{{ $dispositionRelation->disposition->letter_sort }}</code>
+        <hr>
         <p class="text-justify m-0">{{ $dispositionRelation->disposition->description }}</p>
         <hr>
         <label for="" class="control-label my-2">Pesan Disposisi dari {{ $dispositionRelation->disposition_message->user()->get()->first()->name }}</label>

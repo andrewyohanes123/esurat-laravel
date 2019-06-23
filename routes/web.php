@@ -33,3 +33,4 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
     Route::get('pengaturan', 'UserController@edit')->name('setting');
     Route::redirect('/', '/dashboard/home', 301);
 });
+Route::redirect('/home', '/dashboard/home', 301);

@@ -10,7 +10,10 @@
         <div class="row">
           <div class="col-md-6">
             <form class="form-group" action="{{ route('tipe-surat.store') }}" method="post">
-              <input type="text" placeholder="Tipe (Contoh : Penting, Sangat Penting)" name="name" id="" class="form-control">
+              <input type="text" placeholder="Tipe (Contoh : Penting, Sangat Penting)" name="name" id="" class="form-control @error('name') is-invalid @enderror">
+              @error('name')
+                <span class="invalid-feedback">{{ $message }}</span>
+              @enderror
               <hr>
               <button type="submit" class="btn btn-outline-success btn-sm">Tambah</button>
               @csrf

@@ -36,6 +36,12 @@ class LetterTypeController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'name' => 'required'
+        ], [
+            'name.required' => 'Tipe surat harus diisi'
+        ]);
+        
         $status = LetterType::create($request->all());
 
         if ($status) {

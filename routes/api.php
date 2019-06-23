@@ -22,7 +22,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::group(['middleware' => 'api_token'], function () {
    Route::get('/departments', function(){
-       $depts = Department::all();
+       $depts = Department::whereNotIn('name', ['Administrator'])->get();
        return response()->json($depts);
    });
    Route::get('/departments/{id}', function($id){
@@ -46,5 +46,12 @@ Route::group(['middleware' => 'api_token'], function () {
    Route::get('setting', function(){
        $setting = \App\Setting::orderBy('id', 'DESC')->get()->first();
        return response()->json($setting);
+   });
+   Route::put('setting/{id}', function($id, Request $request){
+       \App\Setting::whereId($id)->update([
+           'users_allow_create_disposition' => serialize($request->users_allow_create_disposition),
+           'users_allow_create_outbox' => serialize($request->users_allow_create_outbox),
+       ]);
+       return ['msg' => 'OK', 'status' => true];
    });
 });

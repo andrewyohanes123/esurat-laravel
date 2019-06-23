@@ -17,7 +17,6 @@
             <th>Nama</th>
             <th>Email</th>
             <th>Jabatan</th>
-            <th>Role</th>
             <th>Edit/Hapus</th>
           </tr>
         </thead>
@@ -27,7 +26,6 @@
                 <td>{{ Request::get('page') ? $i + ((intval(Request::get('page')) - 1)* 10) + 1 : $i +1 }}</td>
                 <td>{{ $user->name }}</td>
                 <td>{{ $user->email }}</td>
-                <td>{{ $user->role }}</td>
                 <td>{{ $user->department->name }}</td>
                 <td>
                   <a href="{{ route('user.show', ['id' => $user->id]) }}" class="btn btn-warning btn-sm">Edit</a>

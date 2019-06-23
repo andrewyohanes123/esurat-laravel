@@ -9,11 +9,11 @@
         @endslot
         <form action="{{ route('disposition.store') }}" method="POST" enctype="multipart/form-data" class="form-group">
             @csrf
-            {{-- @if(session('success'))
-            <div class="alert alert-success">{{ $message }}</div>
+            @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
             @elseif(session('failed'))
-            <div class="alert alert-danger">{{ $message }}</div>
-            @endif --}}
+            <div class="alert alert-danger">{{ session('failed') }}</div>
+            @endif
             <div class="row">
                 <div class="col-md-6">
                     <label for="" class="control-label my-2">Nomor Surat</label>
@@ -27,12 +27,16 @@
                         <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                     @enderror
                     <label for="" class="control-label my-2">Tipe Surat</label>
-                    <select name="letter_type_id" id="" class="form-control @error('letter_type_id') is-invalid @enderror">
-                        <option value="">-- Pilih Tipe Surat --</option>
-                        @foreach ($letterTypes as $type)
-                        <option {{ old('letter_type_id') === $type->id ? 'selected' : '' }} value="{{ $type->id }}">{{ $type->name }}</option>
-                        @endforeach
-                    </select>
+                    @if (sizeof($letterTypes) > 0)
+                        <select name="letter_type_id" id="" class="form-control @error('letter_type_id') is-invalid @enderror">
+                            <option value="">-- Pilih Tipe Surat --</option>
+                            @foreach ($letterTypes as $type)
+                            <option {{ old('letter_type_id') === $type->id ? 'selected' : '' }} value="{{ $type->id }}">{{ $type->name }}</option>
+                            @endforeach
+                        </select>
+                    @else
+                        <input type="text" name="" disabled class="form-control" placeholder="Tidak ada tipe surat" id="">
+                    @endif
                     @error('letter_type_id')
                         <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                     @enderror
