@@ -16,6 +16,7 @@
             <th>No</th>
             <th>Nama</th>
             <th>Email</th>
+            <th>Nomor Telepon</th>
             <th>Jabatan</th>
             <th>Edit/Hapus</th>
           </tr>
@@ -26,10 +27,18 @@
                 <td>{{ Request::get('page') ? $i + ((intval(Request::get('page')) - 1)* 10) + 1 : $i +1 }}</td>
                 <td>{{ $user->name }}</td>
                 <td>{{ $user->email }}</td>
+                <td>{{ $user->phone_number }}</td>
                 <td>{{ $user->department->name }}</td>
                 <td>
+                  @php
+                      $id = $user->id;
+                  @endphp
                   <a href="{{ route('user.show', ['id' => $user->id]) }}" class="btn btn-warning btn-sm">Edit</a>
-                  <button class="btn btn-danger btn-sm">Hapus</button>
+                  <form class="d-inline-block" action="{{ route('user.destroy', compact('id')) }}" method="post">
+                      @csrf
+                      @method('DELETE')
+                      <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                  </form>
                 </td>
               </tr>
           @endforeach

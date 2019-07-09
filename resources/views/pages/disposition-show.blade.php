@@ -26,17 +26,25 @@
         <label for="" class="control-label my-2">Pesan Disposisi dari {{ $dispositionRelation->disposition_message->user()->get()->first()->name }}</label>
         <textarea class="form-control" style="resize: none" readonly>{{ $dispositionRelation->disposition_message->message }}</textarea>
         <hr>
-        <p class="small text-muted m-0">Lampiran</p>
+        <p class="small text-muted my-2">Lampiran</p>
         @if (sizeof($dispositionRelation->disposition->letterFiles()->get()) === 0)
             <h5 class="my-2 d-inline-block"><span class="badge rounded-pill badge-dark p-2">Tidak ada lampiran</span></h5>
         @endif
         <div class="row">
           @foreach ($dispositionRelation->disposition->letterFiles()->get() as $file)
-              <div class="col-md-2">
-                <div class="card border-0 shadow-sm">
-                  <img src="{{ Storage::url('attachments/' . $file->file) }}" class="card-img-top" alt="">
+              <div class="col-md-3">
+                <div class="card border-0 shadow-sm bg-primary">
+                  @if ($file->type !== 'application/pdf')
+                    <a target="_blank" href="{{ Storage::url('attachments/' . $file->file) }}"><img src="{{ Storage::url('attachments/' . $file->file) }}" class="card-img-top" alt=""></a>
+                  @endif
                   @if ($file->name !== '')
-                    <div class="card-body p-1">{{ $file->name }}</div>
+                    <div class="card-body {{ $file->type !== 'application/pdf' ? 'p-1 text-white' : 'p-3' }}">
+                      @if ($file->type !== 'application/pdf')
+                      {{ $file->name }}
+                      @else
+                      <a target="_blank" class="text-white" href="{{ Storage::url('attachments/' . $file->file) }}">{{ $file->name }}</a>
+                      @endif
+                    </div>
                   @endif
                 </div>
               </div>

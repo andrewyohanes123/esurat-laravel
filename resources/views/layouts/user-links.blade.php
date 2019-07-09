@@ -13,7 +13,8 @@
     @if ($dept === Auth::user()->department_id)
     <li><hr></li>
             <span class="sidebar-heading text-muted px-3">Surat Keluar</span>
-            <li class="nav-item"><a href="#" class="nav-link"><i class="fa fa-envelope fa-lg"></i>&nbsp;Surat Keluar</a></li>
+            <li class="nav-item"><a href="{{ route('outletter.create') }}" class="nav-link {{ Route::currentRouteName() === 'outletter.create' ? 'active' : '' }}"><i class="fa fa-mail-bulk fa-lg"></i>&nbsp;Buat Surat Keluar</a></li>
+            <li class="nav-item"><a href="{{ route('outletter.index') }}" class="nav-link {{ Route::currentRouteName() === 'outletter.index' ? 'active' : '' }}"><i class="fa fa-envelope fa-lg"></i>&nbsp;Surat Keluar</a></li>
         @endif
     @endforeach
 </ul>

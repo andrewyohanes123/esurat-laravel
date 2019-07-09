@@ -34,7 +34,14 @@
                       <td>{{ $type->name }}</td>
                       <td>
                         <a href="{{ route('tipe-surat.edit', $type) }}" class="btn btn-warning btn-sm">Edit</a>
-                        <button class="btn btn-danger btn-sm">Hapus</button>
+                        @php
+                            $id = $type->id;
+                        @endphp
+                        <form action="{{ route('tipe-surat.destroy', compact('id')) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                        </form>
                       </td>
                     </tr>
                 @endforeach

@@ -32,7 +32,9 @@ class DispositionRelationController extends Controller
         $type = 'out';
         $title = 'Disposisi Keluar';
         $icon = 'boxes';
-        $dispositions = DispositionRelation::where('from_user', Auth::user()->id)->with(['disposition'])->get()->load(['from_user', 'to_user']);
+        $dispositions = DispositionRelation::where('from_user', Auth::user()->id)->with(['disposition'])->whereHas('disposition', function($q) {
+            $q->where('letter_sort', 'Surat Masuk');
+        })->get()->load(['from_user', 'to_user']);
         $setting = Setting::orderBy('id', 'DESC')->get()->first();
         return view('pages.dispositions', compact('title', 'icon', 'type'))->withDispositionRelations($dispositions)->withSetting($setting);
     }
@@ -42,9 +44,33 @@ class DispositionRelationController extends Controller
         $type = 'in';
         $title = 'Disposisi Masuk';
         $icon = 'inbox';
-        $dispositions = DispositionRelation::where('to_user', Auth::user()->id)->get()->load(['from_user', 'to_user']);
+        $dispositions = DispositionRelation::where('to_user', Auth::user()->id)->whereHas('disposition', function($q) {
+            // $q->where('letter_sort', 'Surat Masuk');
+        })->get()->load(['from_user', 'to_user']);
         $setting = Setting::orderBy('id', 'DESC')->get()->first();
         return view('pages.dispositions', compact('title', 'icon', 'type'))->withDispositionRelations($dispositions)->withSetting($setting);
+    }
+    
+    public function outletter()
+    {
+        $type = 'in';
+        $title = 'Surat Keluar';
+        $icon = 'inbox';
+        $setting = Setting::orderBy('id', 'DESC')->get()->first();
+        $dispositions = DispositionRelation::where('from_user', Auth::user()->id)->whereHas('disposition', function($q) {
+            $q->where('letter_sort', 'Surat Keluar');
+        })->get()->load(['from_user', 'to_user']);
+        return view('pages.dispositions', compact('title', 'icon', 'type'))->withSetting($setting)->withDispositionRelations($dispositions);
+    }
+
+    public function outletter_create()
+    {
+        $types = \App\LetterType::all();
+        $setting = \App\Setting::orderBy('id', 'DESC')->get()->first();
+        $recepients = \App\User::whereHas('department', function($q){
+            $q->where('name', '=', 'Administrasi');
+        })->get();
+        return view('pages.outletter-create')->withLetterTypes($types)->withSetting($setting)->withUsers($recepients);
     }
 
     /**
@@ -55,8 +81,8 @@ class DispositionRelationController extends Controller
     public function create()
     {
         $types = \App\LetterType::all();
-        $name = '';
         $recepients = \App\User::whereHas('department', function($q){
+            $name = '';
             $dept = Auth::user()->department->name;
             if ($dept === 'Jurusan') {
                 $name = 'Administrasi';
@@ -75,6 +101,73 @@ class DispositionRelationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    public function outletter_store(Request $request)
+    {
+        // dd($request->hasFile('attachment'));
+        $this->validate($request, [
+            'purpose' => 'required',
+            'content' => 'nullable',
+            'description' => 'required',
+            'reference_number' => 'required',
+            'letter_type_id' => 'required',
+            'to_user' => 'required',
+            'name' => 'nullable',
+            'file' => 'required',
+            'file.*' => 'mimes:jpg,png,jpeg,gif,bmp,pdf'
+        ], [
+            'purpose.required' => 'Masukkan tujuan surat',
+            'description.required' => 'Masukkan deskripsi surat',
+            'to_user.required' => 'Pilih penerima disposisi',
+            'letter_type_id.required' => 'Pilih tipe surat',
+            'reference_number.required' => 'Masukkan nomor surat',
+            'file.required' => 'Masukkan file',
+            'file.*.mimes' => 'File surat harus berformat PDF, jpg, png atau jpeg'
+        ]);
+
+        $id = Auth::user()->id;
+
+
+        $disposition = Disposition::create([
+            'purpose' => $request->purpose,
+            'content' => $request->description,
+            'description' => $request->description,
+            'done' => false,
+            'reference_number' => $request->reference_number,
+            'letter_type_id' => $request->letter_type_id,
+            'letter_sort' => 'Surat Keluar'
+        ]);
+
+        $dispositionMessage = DispositionMessage::create([
+            'user_id' => $id,
+            'message' => $request->description
+        ]);
+
+        $status = DispositionRelation::create([
+            'from_user' => $id,
+            'to_user' => $request->to_user,
+            'disposition_id' => $disposition->id,
+            'disposition_message_id' => $dispositionMessage->id
+        ]);
+
+        if ($request->hasFile('file'))
+        {
+            foreach($request->file('file') as $file) :
+                $filename = $file->getClientOriginalName();
+                $name = pathinfo($filename, PATHINFO_FILENAME);
+                $ext = $file->getClientOriginalExtension();
+                $type = $file->getMimeType();
+                $attachment = $filename . "_" . time() . "." . $ext;
+                $file->storeAs('public/attachments', $attachment);
+                LetterFile::create([
+                    'name' => $name,
+                    'file' => $attachment,
+                    'type' => $type,
+                    'disposition_id' => $disposition->id
+                ]);
+            endforeach;
+        }
+        return $status ? redirect()->route('disposition.create')->with('success', 'Berhasil mengirim surat') : redirect()->route('disposition.create')->with('failed', 'Gagal mengirim surat');
+    }
     public function store(Request $request)
     {
         // dd($request->hasFile('attachment'));
@@ -87,7 +180,7 @@ class DispositionRelationController extends Controller
             'to_user' => 'required',
             'name' => 'nullable',
             'file' => 'required',
-            'file.*' => 'mimes:jpg,png,jpeg,gif,bmp'
+            'file.*' => 'mimes:jpg,png,jpeg,gif,bmp,pdf'
         ], [
             'purpose.required' => 'Masukkan tujuan surat',
             'description.required' => 'Masukkan deskripsi surat',
@@ -95,7 +188,7 @@ class DispositionRelationController extends Controller
             'letter_type_id.required' => 'Pilih tipe surat',
             'reference_number.required' => 'Masukkan nomor surat',
             'file.required' => 'Masukkan file',
-            'file.*.mimes' => 'File surat harus berformat jpg, png atau jpeg'
+            'file.*.mimes' => 'File surat harus berformat PDF, jpg, png atau jpeg'
         ]);
 
         $id = Auth::user()->id;
@@ -133,6 +226,7 @@ class DispositionRelationController extends Controller
                 LetterFile::create([
                     'name' => $name,
                     'file' => $attachment,
+                    'type' => $file->getClientMimeType(),
                     'disposition_id' => $disposition->id
                 ]);
             endforeach;

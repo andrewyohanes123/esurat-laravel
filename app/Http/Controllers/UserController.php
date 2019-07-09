@@ -95,6 +95,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $state = User::destroy($id);
+        return $state ? redirect()->route('user.index') : redirect()->route('user.index')->with(['error' => 'Gagal menghapus pengguna']);
     }
 }

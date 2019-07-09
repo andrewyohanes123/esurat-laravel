@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Disposition extends Model
 {
-    protected $fillable = ['purpose', 'content', 'description', 'reference_number', 'letter_type_id'];
+    protected $fillable = ['purpose', 'content', 'description', 'reference_number', 'letter_type_id', 'letter_sort'];
 
     // protected $with = ['letter_type', 'letter_files'];
 

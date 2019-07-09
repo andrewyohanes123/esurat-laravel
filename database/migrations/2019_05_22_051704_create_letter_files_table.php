@@ -17,6 +17,7 @@ class CreateLetterFilesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name')->nullable();
             $table->string('file');
+            $table->string('type');
             $table->unsignedBigInteger('disposition_id');
             $table->timestamps();
         });

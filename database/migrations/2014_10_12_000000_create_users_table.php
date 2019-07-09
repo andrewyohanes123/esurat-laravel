@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['administrator', 'employee', 'co-director', 'director']);
+            $table->string('phone_number')->unique();
             $table->unsignedBigInteger('department_id');
             $table->rememberToken();
             $table->timestamps();

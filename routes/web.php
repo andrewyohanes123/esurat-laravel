@@ -30,6 +30,10 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
     Route::get('/hak-akses', function () {
         return view('pages.privilleges');
     })->name('privilleges');
+    Route::get('surat-keluar', 'DispositionRelationController@outletter')->name('outletter.index');
+    Route::get('surat-keluar/create', 'DispositionRelationController@outletter_create')->name('outletter.create');
+    Route::post('surat-keluar/store', 'DispositionRelationController@outletter_store')->name('outletter.store');
+    Route::post('');
     Route::get('pengaturan', 'UserController@edit')->name('setting');
     Route::redirect('/', '/dashboard/home', 301);
 });

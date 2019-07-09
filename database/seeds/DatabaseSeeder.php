@@ -43,7 +43,8 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('1234'),
             'department_id' => 11,
             'role' => 'administrator',
-            'api_token' => Str::random(20)
+            'api_token' => Str::random(20),
+            'phone_number' => '00'
         ]);
         $this->call(UserSeeder::class);
     }

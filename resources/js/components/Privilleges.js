@@ -13,7 +13,7 @@ export default class Privilleges extends Component {
             setting: {
                 users_allow_create_disposition: [],
                 users_allow_create_outbox: [],
-                id : 0
+                id: 0
             },
             dept: {
                 permissions: {},
@@ -30,6 +30,8 @@ export default class Privilleges extends Component {
         this.updatePermission = this.updatePermission.bind(this);
         this.deleteUserCreateDisposition = this.deleteUserCreateDisposition.bind(this);
         this.updateSetting = this.updateSetting.bind(this);
+        // this.addUserCreateDisposition = this.addUserCreateDisposition.bind(this);
+        this.addUserCreateOutbox = this.addUserCreateOutbox.bind(this);
     }
     componentDidMount() {
         this.getDepts();
@@ -52,7 +54,7 @@ export default class Privilleges extends Component {
     }
 
     onSelectDept(ev) {
-        this.setState({ [event.target.name]: ev.target.value }, this.state.id === "" ? this.getDept : () => console.log('changed'));
+        this.setState({ [event.target.name]: ev.target.value }, this.state.id !== "" ? this.getDept : () => console.log('changed'));
     }
 
     onCheckboxClick(ev) {
@@ -68,35 +70,37 @@ export default class Privilleges extends Component {
         }).then(({ data }) => console.log(data));
     }
 
-    updateSetting(id) {
-        const {setting : { users_allow_create_disposition, users_allow_create_outbox }} = this.state;
+    updateSetting() {
+        const { setting: { users_allow_create_disposition, users_allow_create_outbox, id } } = this.state;
         axios.put(`/api/setting/${id}`, {
             users_allow_create_disposition, users_allow_create_outbox
         }).then(({ data }) => console.log(data));
     }
 
-    addUserCreateDisposition(id) {
-        let { setting: { users_allow_create_disposition, users_allow_create_outbox, id : idSetting } } = this.state;
-        users_allow_create_outbox = users_allow_create_outbox.push(id)
-        this.setState({ setting: { users_allow_create_disposition, users_allow_create_outbox, id : idSetting } }, this.updateSetting);
+    addUserCreateDisposition() {
+        // const { setting } = this.state;
+        const { setting: { users_allow_create_disposition, users_allow_create_outbox, id: idSetting }, id_disposition } = this.state;
+        users_allow_create_disposition.push(parseInt(id_disposition))
+        console.log(users_allow_create_disposition)
+        this.setState({ setting: { users_allow_create_disposition, users_allow_create_outbox, id: idSetting } }, this.updateSetting);
     }
-    
-    addUserCreateOutbox(id) {
-        let { setting: { users_allow_create_disposition, users_allow_create_outbox, id : idSetting } } = this.state;
-        users_allow_create_disposition = users_allow_create_disposition.push(id)
-        this.setState({ setting: { users_allow_create_disposition, users_allow_create_outbox, id : idSetting } }, this.updateSetting);
+
+    addUserCreateOutbox() {
+        let { setting: { users_allow_create_disposition, users_allow_create_outbox, id: idSetting }, id_outbox } = this.state;
+        users_allow_create_disposition.push(parseInt(id_outbox));
+        this.setState({ setting: { users_allow_create_disposition, users_allow_create_outbox, id: idSetting } }, this.updateSetting);
     }
 
     deleteUserCreateDisposition(id) {
-        let { setting: { users_allow_create_disposition, users_allow_create_outbox, id : idSetting } } = this.state;
+        let { setting: { users_allow_create_disposition, users_allow_create_outbox, id: idSetting } } = this.state;
         users_allow_create_disposition = users_allow_create_disposition.filter(dept => dept !== id)
-        this.setState({ setting: { users_allow_create_disposition, users_allow_create_outbox, id : idSetting } }, this.updateSetting);
+        this.setState({ setting: { users_allow_create_disposition, users_allow_create_outbox, id: idSetting } }, this.updateSetting);
     }
-    
+
     deleteUserCreateOutbox(id) {
-        let { setting: { users_allow_create_disposition, users_allow_create_outbox, id : idSetting } } = this.state;
-        users_allow_create_outbox =users_allow_create_outbox.filter(dept => dept !== id)
-        this.setState({ setting: { users_allow_create_disposition, users_allow_create_outbox, id : idSetting } }, this.updateSetting);
+        let { setting: { users_allow_create_disposition, users_allow_create_outbox, id: idSetting } } = this.state;
+        users_allow_create_outbox = users_allow_create_outbox.filter(dept => dept !== id)
+        this.setState({ setting: { users_allow_create_disposition, users_allow_create_outbox, id: idSetting } }, this.updateSetting);
     }
 
     render() {
@@ -122,7 +126,7 @@ export default class Privilleges extends Component {
                                     {depts.filter(dept => (!setting.users_allow_create_disposition.includes(dept.id))).map(dept => (<option value={dept.id} key={dept.id}>{dept.name}</option>))}
                                 </select>
                                 <InputGroupAddon addonType="append">
-                                    <Button color="success">Tambah</Button>
+                                    <Button onClick={this.addUserCreateDisposition.bind(this)} color="success">Tambah</Button>
                                 </InputGroupAddon>
                             </InputGroup>
                             <hr />

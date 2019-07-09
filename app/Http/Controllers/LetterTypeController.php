@@ -94,8 +94,9 @@ class LetterTypeController extends Controller
      * @param  \App\LetterType  $letterType
      * @return \Illuminate\Http\Response
      */
-    public function destroy(LetterType $letterType)
+    public function destroy($id)
     {
-        //
+        $state = LetterType::destroy($id);
+        return $state ? redirect()->route('tipe-surat.index') : redirect()->route('tipe-surat.index')->with(['error' => 'Gagal menghapus pengguna']);
     }
 }
