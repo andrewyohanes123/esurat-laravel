@@ -87,7 +87,7 @@ export default class Privilleges extends Component {
 
     addUserCreateOutbox() {
         let { setting: { users_allow_create_disposition, users_allow_create_outbox, id: idSetting }, id_outbox } = this.state;
-        users_allow_create_disposition.push(parseInt(id_outbox));
+        users_allow_create_outbox.push(parseInt(id_outbox));
         this.setState({ setting: { users_allow_create_disposition, users_allow_create_outbox, id: idSetting } }, this.updateSetting);
     }
 
@@ -157,7 +157,7 @@ export default class Privilleges extends Component {
                                     {depts.filter(dept => (!setting.users_allow_create_outbox.includes(dept.id))).map(dept => (<option value={dept.id} key={dept.id}>{dept.name}</option>))}
                                 </select>
                                 <InputGroupAddon addonType="append">
-                                    <Button color="success" size="sm">Tambah</Button>
+                                    <Button onClick={this.addUserCreateOutbox} color="success" size="sm">Tambah</Button>
                                 </InputGroupAddon>
                             </InputGroup>
                             <hr />
@@ -176,7 +176,7 @@ export default class Privilleges extends Component {
                                     }
                                     {!this.state.loading && depts.filter(dept => (setting.users_allow_create_outbox.includes(dept.id))).map(dept => (<tr key={dept.id}>
                                         <td>{dept.name}</td>
-                                        <td><Button color="danger" size="sm"><i className="fa fa-trash fa-lg"></i></Button></td>
+                                        <td><Button onClick={this.deleteUserCreateOutbox.bind(this, dept.id)} color="danger" size="sm"><i className="fa fa-trash fa-lg"></i></Button></td>
                                     </tr>))}
                                 </tbody>
                             </Table>

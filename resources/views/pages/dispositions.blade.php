@@ -20,7 +20,7 @@
             @slot('id', $d->id)
             @slot('type', $type)
             <p class="text-muted m-0 d-block clearfix">
-                <i class="fa fa-paper-plane fa-lg"></i>&nbsp;Dikirim ke : {{ $d->to_user()->first()->name }} dari : {{ $d->from_user()->first()->name }} 
+                <i class="fa fa-paper-plane fa-lg"></i>&nbsp;Dikirim dari : {{ $d->from_user()->first()->name }} ke : {{ $d->to_user()->first()->name }}
                 <p class="d-block m-0 text-muted float-right">{{ $d->disposition->letter_sort }}</p>
             </p>
             <h4 class="my-2">
