@@ -33,7 +33,8 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
     })->name('privilleges');
     Route::get('surat-keluar', 'DispositionRelationController@outletter')->name('outletter.index');
     Route::get('surat-keluar/create', 'DispositionRelationController@outletter_create')->name('outletter.create');
-    Route::post('surat-keluar/store', 'DispositionRelationController@outletter_store')->name('outletter.store');
+    Route::post('surat-keluar/store', 'DispositionController@store')->name('outletter.store');
+    Route::get('surat-keluar/{id}', 'DispositionController@show')->name('outletter.show');
     Route::get('cari', 'DispositionController@search')->name('disposition.search');
     Route::post('');
     Route::get('pengaturan', 'UserController@edit')->name('setting');

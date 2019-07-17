@@ -4,7 +4,7 @@
       <div class="col-md-8">
         <h5 class="m-0">{{ $title }}</h5>        
       </div>
-      @if (Route::currentRouteName() === 'disposition.in' || Route::currentRouteName() === 'disposition.out')
+      @if (Route::currentRouteName() === 'disposition.in' || Route::currentRouteName() === 'disposition.out' || Route::currentRouteName() === 'outletter.index')
       <div class="col-md-3">
         <form action="" class="form-inline" method="get">
           <div class="input-group input-group-sm">

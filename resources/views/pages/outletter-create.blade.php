@@ -48,12 +48,7 @@
                 </div>
                 <div class="col-md-6">
                     <label for="" class="control-label my-2">Dikirim Ke</label>
-                    <select name="to_user" id="" class="form-control @error('to_user') is-invalid @enderror">
-                        <option value="">-- Pilih Penerima Surat --</option>
-                        @foreach ($users as $user)
-                        <option {{ old('to_user') === $type->id ? 'selected' : '' }} value="{{ $user->id }}">{{ $user->name }} - {{ $user->department->name }}</option>
-                        @endforeach
-                    </select>
+                    <input type="text" name="send_to" placeholder="Dikirim ke" class="form-control">
                     @error('to_user')
                         <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                     @enderror
@@ -65,7 +60,7 @@
                         <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                     @enderror
                     <hr>
-                    <button type="submit" class="btn btn-outline-success btn-sm">Kirim</button>
+                    <button type="submit" class="btn btn-outline-success btn-sm"><i class="fa fa-save fa-lg"></i>&nbsp;Simpan</button>
                 </div>
             </div>
         </form>

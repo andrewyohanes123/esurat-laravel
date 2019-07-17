@@ -27,6 +27,9 @@
                 <span class="badge badge-danger">{{ $d->disposition->letterType()->get()->first()->name }}</span>                
             </h4>
             <p class="my-2">{{ Str::limit($d->disposition_message->message, 40) }}</p>
+            @if (Auth::user()->id === $d->disposition->from_user)
+                <a href="" class="btn btn-outline-primary btn-sm mt-2"><i class="fa fa-edit fa-lg"></i>&nbsp;Edit Surat</a>
+            @endif
             <hr>
             <p class="m-0 text-muted">Lampiran</p>
             @if (sizeof($d->disposition->letterFiles()->get()) === 0)

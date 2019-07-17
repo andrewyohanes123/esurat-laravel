@@ -21,6 +21,7 @@ class CreateDispositionsTable extends Migration
             $table->boolean('done')->default(false);
             $table->string('reference_number')->unique();
             $table->bigInteger('letter_type_id')->unsigned();
+            $table->string('send_to')->nullable();
             $table->unsignedBigInteger('from_user');
             $table->unsignedBigInteger('last_user');
             $table->enum('letter_sort', ['Surat Keluar', 'Surat Masuk'])->default('Surat Masuk');

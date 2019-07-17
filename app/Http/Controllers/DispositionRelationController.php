@@ -73,16 +73,22 @@ class DispositionRelationController extends Controller
         return view('pages.dispositions', compact('title', 'icon', 'type'))->withDispositionRelations($dispositions)->withSetting($setting);
     }
 
-    public function outletter()
+    public function outletter(Request $request)
     {
         $type = 'in';
         $title = 'Surat Keluar';
         $icon = 'inbox';
+        if ($request->key) {
+            $dispositions = Disposition::where('letter_sort', 'Surat Keluar')
+            ->where('purpose', 'like', "%{$request->key}%")
+            ->orWhere('reference_number', 'like', "%{$request->key}%")
+            ->orWhere('description', 'like', "%{$request->key}%")
+            ->paginate(10);
+        } else {
+            $dispositions = Disposition::where('letter_sort', 'Surat Keluar')->paginate(10);
+        }
         $setting = Setting::orderBy('id', 'DESC')->get()->first();
-        $dispositions = DispositionRelation::where('from_user', Auth::user()->id)->whereHas('disposition', function ($q) {
-            $q->where('letter_sort', 'Surat Keluar');
-        })->get()->load(['from_user', 'to_user']);
-        return view('pages.dispositions', compact('title', 'icon', 'type'))->withSetting($setting)->withDispositionRelations($dispositions);
+        return view('pages.outletters', compact('title', 'icon', 'type'))->withSetting($setting)->withDispositions($dispositions);
     }
 
     public function outletter_create()
@@ -328,7 +334,7 @@ class DispositionRelationController extends Controller
      */
     public function edit($id)
     {
-        //
+        
     }
 
     /**

@@ -9,19 +9,26 @@ class Disposition extends Model
 {
     use SearchableTrait;
 
-    protected $fillable = ['purpose', 'content', 'description', 'reference_number', 'letter_type_id', 'letter_sort', 'from_user', 'last_user'];
+    protected $fillable = [
+        'purpose', 
+        'content', 
+        'description', 
+        'reference_number', 
+        'letter_type_id', 
+        'letter_sort', 
+        'from_user', 
+        'last_user', 
+        'send_to'
+    ];
 
     protected $searchable = [
         'columns' => [
             'dispositions.reference_number' => 10,
             'dispositions.content' => 9,
+            'dispositions.description' => 9,
+            'dispositions.send_to' => 9,
             'dispositions.letter_sort' => 9,
             'dispositions.purpose' => 9,
-        ],
-        'joins' => [
-            'letter_types' => ['dispositions.letter_type_id', 'letter_types.id'],
-            // 'disposition_messages' => ['disposition_messages.disposition_id', 'dispositions.id'],
-            'letter_files' => ['letter_files.disposition_id', 'dispositions.id']
         ]
     ];
 
@@ -29,7 +36,7 @@ class Disposition extends Model
 
     public function letterFiles()
     {
-        return $this->hasMany('App\LetterFile');
+        return $this->hasMany(\App\LetterFile::class, 'disposition_id', 'id');
     }
 
     public function letterType()
