@@ -21,12 +21,16 @@ class CreateDispositionsTable extends Migration
             $table->boolean('done')->default(false);
             $table->string('reference_number')->unique();
             $table->bigInteger('letter_type_id')->unsigned();
+            $table->unsignedBigInteger('from_user');
+            $table->unsignedBigInteger('last_user');
             $table->enum('letter_sort', ['Surat Keluar', 'Surat Masuk'])->default('Surat Masuk');
             $table->timestamps();
         });
 
         Schema::table('dispositions', function(Blueprint $table){
             $table->foreign('letter_type_id')->references('id')->on('letter_types');
+            $table->foreign('from_user')->references('id')->on('users');
+            $table->foreign('last_user')->references('id')->on('users');
         });
 
         Schema::table('letter_files', function(Blueprint $table){

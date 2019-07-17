@@ -27,37 +27,59 @@ class DispositionRelationController extends Controller
         return view('pages.dispositions')->withDispositionRelations($dispositions)->withSetting($setting);
     }
 
-    public function out_disposition()
+    public function out_disposition(Request $req)
     {
         $type = 'out';
         $title = 'Disposisi Keluar';
         $icon = 'boxes';
-        $dispositions = DispositionRelation::where('from_user', Auth::user()->id)->with(['disposition'])->whereHas('disposition', function($q) {
-            $q->where('letter_sort', 'Surat Masuk');
-        })->get()->load(['from_user', 'to_user']);
+        if ($req->key) {
+            $key = $req->key;
+            $dispositions = DispositionRelation::where('from_user', Auth::user()->id)
+                ->with(['disposition'])->whereHas('disposition', function ($q) use ($key) {
+                    $q->where('reference_number', 'like', "%{$key}%");
+                    $q->orWhere('purpose', 'like', "%{$key}%");
+                    $q->orWhere('description', 'like', "%{$key}%");
+                    $q->where('letter_sort', 'Surat Masuk');
+                })->get()->load(['from_user', 'to_user']);
+        } else {
+            $dispositions = DispositionRelation::where('from_user', Auth::user()->id)->with(['disposition'])->whereHas('disposition', function ($q) {
+                $q->where('letter_sort', 'Surat Masuk');
+            })->get()->load(['from_user', 'to_user']);
+        }
         $setting = Setting::orderBy('id', 'DESC')->get()->first();
         return view('pages.dispositions', compact('title', 'icon', 'type'))->withDispositionRelations($dispositions)->withSetting($setting);
     }
 
-    public function in_disposition()
+    public function in_disposition(Request $req)
     {
         $type = 'in';
         $title = 'Disposisi Masuk';
         $icon = 'inbox';
-        $dispositions = DispositionRelation::where('to_user', Auth::user()->id)->whereHas('disposition', function($q) {
-            // $q->where('letter_sort', 'Surat Masuk');
-        })->get()->load(['from_user', 'to_user']);
+        if ($req->key) {
+            $key = $req->key;
+            $dispositions = DispositionRelation::where('to_user', Auth::user()->id)
+                ->with(['disposition'])->whereHas('disposition', function ($q) use ($key) {
+                    $q->where('reference_number', 'like', "%{$key}%");
+                    $q->orWhere('purpose', 'like', "%{$key}%");
+                    $q->orWhere('description', 'like', "%{$key}%");
+                    $q->where('letter_sort', 'Surat Masuk');
+                })->get()->load(['from_user', 'to_user']);
+        } else {
+            $dispositions = DispositionRelation::where('to_user', Auth::user()->id)->with(['disposition'])->whereHas('disposition', function ($q) {
+                $q->where('letter_sort', 'Surat Masuk');
+            })->get()->load(['from_user', 'to_user']);
+        }
         $setting = Setting::orderBy('id', 'DESC')->get()->first();
         return view('pages.dispositions', compact('title', 'icon', 'type'))->withDispositionRelations($dispositions)->withSetting($setting);
     }
-    
+
     public function outletter()
     {
         $type = 'in';
         $title = 'Surat Keluar';
         $icon = 'inbox';
         $setting = Setting::orderBy('id', 'DESC')->get()->first();
-        $dispositions = DispositionRelation::where('from_user', Auth::user()->id)->whereHas('disposition', function($q) {
+        $dispositions = DispositionRelation::where('from_user', Auth::user()->id)->whereHas('disposition', function ($q) {
             $q->where('letter_sort', 'Surat Keluar');
         })->get()->load(['from_user', 'to_user']);
         return view('pages.dispositions', compact('title', 'icon', 'type'))->withSetting($setting)->withDispositionRelations($dispositions);
@@ -67,7 +89,7 @@ class DispositionRelationController extends Controller
     {
         $types = \App\LetterType::all();
         $setting = \App\Setting::orderBy('id', 'DESC')->get()->first();
-        $recepients = \App\User::whereHas('department', function($q){
+        $recepients = \App\User::whereHas('department', function ($q) {
             $q->where('name', '=', 'Administrasi');
         })->get();
         return view('pages.outletter-create')->withLetterTypes($types)->withSetting($setting)->withUsers($recepients);
@@ -81,7 +103,7 @@ class DispositionRelationController extends Controller
     public function create()
     {
         $types = \App\LetterType::all();
-        $recepients = \App\User::whereHas('department', function($q){
+        $recepients = \App\User::whereHas('department', function ($q) {
             $name = '';
             $dept = Auth::user()->department->name;
             if ($dept === 'Jurusan') {
@@ -149,9 +171,8 @@ class DispositionRelationController extends Controller
             'disposition_message_id' => $dispositionMessage->id
         ]);
 
-        if ($request->hasFile('file'))
-        {
-            foreach($request->file('file') as $file) :
+        if ($request->hasFile('file')) {
+            foreach ($request->file('file') as $file) :
                 $filename = $file->getClientOriginalName();
                 $name = pathinfo($filename, PATHINFO_FILENAME);
                 $ext = $file->getClientOriginalExtension();
@@ -200,7 +221,9 @@ class DispositionRelationController extends Controller
             'description' => $request->description,
             'done' => false,
             'reference_number' => $request->reference_number,
-            'letter_type_id' => $request->letter_type_id
+            'letter_type_id' => $request->letter_type_id,
+            'from_user' => $id,
+            'last_user' => $request->to_user
         ]);
 
         $dispositionMessage = DispositionMessage::create([
@@ -215,9 +238,8 @@ class DispositionRelationController extends Controller
             'disposition_message_id' => $dispositionMessage->id
         ]);
 
-        if ($request->hasFile('file'))
-        {
-            foreach($request->file('file') as $file) :
+        if ($request->hasFile('file')) {
+            foreach ($request->file('file') as $file) :
                 $filename = $file->getClientOriginalName();
                 $name = pathinfo($filename, PATHINFO_FILENAME);
                 $ext = $file->getClientOriginalExtension();
@@ -246,6 +268,11 @@ class DispositionRelationController extends Controller
 
         $idUser = Auth::user()->id;
         $user = \App\User::findOrFail($request->to_user);
+
+        $d = Disposition::whereId($request->disposition_id)->update([
+            'last_user' => $request->to_user
+        ]);
+
         $dispositionMessage = DispositionMessage::create([
             'user_id' => $id,
             'message' => $request->message
@@ -258,7 +285,7 @@ class DispositionRelationController extends Controller
             'disposition_message_id' => $dispositionMessage->id
         ]);
 
-        return redirect()->route('disposition.showtype', compact('id', 'type'))->with('success', 'Berhasil didisposisi ke ' . $user->name);
+        return $d ? redirect()->route('disposition.showtype', compact('id', 'type'))->with('success', 'Berhasil didisposisi ke ' . $user->name) : '';
     }
     /**
      * Display the specified resource.
@@ -268,7 +295,7 @@ class DispositionRelationController extends Controller
      */
     public function show($id, $type)
     {
-        $recepients = \App\User::whereHas('department', function($q){
+        $recepients = \App\User::whereHas('department', function ($q) {
             $dept = Auth::user()->department->name;
             $or = '';
             if ($dept === 'Jurusan') {
@@ -288,7 +315,7 @@ class DispositionRelationController extends Controller
 
             $q->where('name', 'LIKE', $name)->orWhere('name', 'LIKE', $or);
         })->get();
-        $disposition = DispositionRelation::findOrfail($id)->load(['from_user', 'to_user']);
+        $disposition = DispositionRelation::with(['disposition.lastUser'])->findOrfail($id)->load(['from_user', 'to_user']);
         $setting = Setting::orderBy('id', 'DESC')->get()->first();
         return view('pages.disposition-show', compact('type'))->withDispositionRelation($disposition)->withSetting($setting)->withUsers($recepients);
     }

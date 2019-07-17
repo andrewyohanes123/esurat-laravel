@@ -17,6 +17,11 @@ class DispositionController extends Controller
         //
     }
 
+    public function search(Request $req)
+    {
+        return Disposition::search($req->key)->get();
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -25,6 +30,13 @@ class DispositionController extends Controller
     public function create()
     {
         
+    }
+
+
+    public function verification($type, $id)
+    {
+        $status = Disposition::whereId($id)->update(['done' => 1]);
+        return $status ? redirect()->route('disposition.showtype', compact('id', 'type')) : '';
     }
 
     /**

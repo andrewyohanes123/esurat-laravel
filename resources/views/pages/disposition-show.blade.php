@@ -13,18 +13,35 @@
         @if (session('success'))
 
         @endif
-        <h5 class=" m-0"><span class="badge badge-primary badge-lg">{{ $dispositionRelation->from_user()->first()->name }}</span>
-          <i class="fa fa-angle-right fa-md"></i>
-        <span class="badge badge-success badge-lg">{{ $dispositionRelation->to_user()->first()->name }}</span>
+        <div class="row">
+          <div class="col-md-6 my-2">
+            <h5 class=" m-0"><span class="badge badge-primary badge-lg">{{ $dispositionRelation->from_user()->first()->name }}</span>
+              <i class="fa fa-angle-right fa-md"></i>
+              <span class="badge badge-success badge-lg">{{ $dispositionRelation->to_user()->first()->name }}</span>
+            </h5>
+          </div>
+          <div class="col-md-6">
+            <p class="text-muted text-right">Terkirim ke : {{ $dispositionRelation->disposition->lastUser->name }}</p>
+          </div>
+        </div>
         {{ $dispositionRelation->disposition->letter_type }}
-        </h5>
         <h4 class="text-muted m-0">{{ $dispositionRelation->disposition->letterType()->get()->first()->name }}</h4>
         <code>{{ $dispositionRelation->disposition->letter_sort }}</code>
         <hr>
         <p class="text-justify m-0">{{ $dispositionRelation->disposition->description }}</p>
+        @if (Auth::user()->department->name === 'Direktur')
+          @php
+              $id = $dispositionRelation->disposition->id;
+          @endphp
+          <form action="{{ route('disposition.verification', compact('type', 'id')) }}" class="form-inline" method="post">
+            @method('PUT')
+            @csrf
+            <button type="submit" {{ $dispositionRelation->disposition->done ? 'disabled' : '' }} class="btn btn-outline-primary btn-sm mt-3"><i class="fa fa-check fa-md"></i>&nbsp;{{ $dispositionRelation->disposition->done ? 'Surat Terverifikasi' : 'Verifikasi Surat' }}</button>
+          </form>
+        @endif
         <hr>
         <label for="" class="control-label my-2">Pesan Disposisi dari {{ $dispositionRelation->disposition_message->user()->get()->first()->name }}</label>
-        <textarea class="form-control" style="resize: none" readonly>{{ $dispositionRelation->disposition_message->message }}</textarea>
+        <textarea class="form-control" rows="10" style="resize: none" readonly>{{ $dispositionRelation->disposition_message->message }}</textarea>
         <hr>
         <p class="small text-muted my-2">Lampiran</p>
         @if (sizeof($dispositionRelation->disposition->letterFiles()->get()) === 0)
