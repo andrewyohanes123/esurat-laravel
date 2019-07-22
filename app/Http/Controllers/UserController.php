@@ -44,7 +44,8 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'role' => 'employee',
-            'department_id' => $request->department_id
+            'department_id' => $request->department_id,
+            'phone_number' => $request->phone_number
         ]);
 
         if ($user) return redirect()->route('user.index');

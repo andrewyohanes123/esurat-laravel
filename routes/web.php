@@ -21,6 +21,7 @@ Route::resource('department', 'DepartmentController');
 Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index')->name('home');
     Route::resource('user', 'UserController');
+    Route::resource('files', 'LetterFileController');
     Route::resource('disposition', 'DispositionRelationController');
     Route::get('disposisi/keluar', 'DispositionRelationController@out_disposition')->name('disposition.out');
     Route::get('disposisi/masuk', 'DispositionRelationController@in_disposition')->name('disposition.in');

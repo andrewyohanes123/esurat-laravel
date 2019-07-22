@@ -264,19 +264,20 @@ class DispositionRelationController extends Controller
 
     public function forward(Request $request, $type, $id)
     {
+        // dd($request->to_user);
         $this->validate($request, [
             'message' => 'required|min:10',
             'to_user' => 'required'
         ], [
             'message.required' => 'Masukkan pesan disposisi',
+            'message.min' => 'Pesan disposisi minimal 10 karakter',
             'to_user.required' => 'Pilih penerima disposisi'
         ]);
 
         $idUser = Auth::user()->id;
-        $user = \App\User::findOrFail($request->to_user);
 
         $d = Disposition::whereId($request->disposition_id)->update([
-            'last_user' => $request->to_user
+            'last_user' => $request->to_user[0]
         ]);
 
         $dispositionMessage = DispositionMessage::create([
@@ -284,14 +285,17 @@ class DispositionRelationController extends Controller
             'message' => $request->message
         ]);
 
-        DispositionRelation::create([
-            'from_user' => $idUser,
-            'to_user' => $request->to_user,
-            'disposition_id' => $request->disposition_id,
-            'disposition_message_id' => $dispositionMessage->id
-        ]);
+        foreach($request->to_user as $user) {
+            DispositionRelation::create([
+                'from_user' => $idUser,
+                'to_user' => $user,
+                'disposition_id' => $request->disposition_id,
+                'disposition_message_id' => $dispositionMessage->id
+            ]);
+        }
 
-        return $d ? redirect()->route('disposition.showtype', compact('id', 'type'))->with('success', 'Berhasil didisposisi ke ' . $user->name) : '';
+        // return $id;
+        return $d ? redirect()->route('disposition.showtype', compact('id', 'type'))->with('success', 'Berhasil didisposisi') : '';
     }
     /**
      * Display the specified resource.
@@ -334,7 +338,10 @@ class DispositionRelationController extends Controller
      */
     public function edit($id)
     {
-        
+        $disposition = DispositionRelation::with(['disposition.lastUser'])->findOrfail($id)->load(['from_user', 'to_user']);
+        $setting = Setting::orderBy('id', 'DESC')->get()->first();
+        $types = \App\LetterType::all();
+        return view('pages.disposition-edit')->withDispositionRelation($disposition)->withSetting($setting)->withLetterTypes($types);
     }
 
     /**

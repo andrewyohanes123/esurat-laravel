@@ -28,7 +28,10 @@
             </h4>
             <p class="my-2">{{ Str::limit($d->disposition_message->message, 40) }}</p>
             @if (Auth::user()->id === $d->disposition->from_user)
-                <a href="" class="btn btn-outline-primary btn-sm mt-2"><i class="fa fa-edit fa-lg"></i>&nbsp;Edit Surat</a>
+                @php
+                  $id = $d->id;  
+                @endphp
+                <a href="{{ route('disposition.edit', compact('id', 'type')) }}" class="btn btn-outline-primary btn-sm mt-2"><i class="fa fa-edit fa-lg"></i>&nbsp;Edit Surat</a>
             @endif
             <hr>
             <p class="m-0 text-muted">Lampiran</p>

@@ -21,7 +21,7 @@
             </h5>
           </div>
           <div class="col-md-6">
-            <p class="text-muted text-right">Terkirim ke : {{ $dispositionRelation->disposition->lastUser->name }}</p>
+            <p class="text-muted text-right">Terkirim ke : {{ $dispositionRelation->disposition->lastUser->department->name }}</p>
           </div>
         </div>
         {{ $dispositionRelation->disposition->letter_type }}
@@ -73,10 +73,10 @@
         @slot('title', 'Kirim Disposisi Ke')
         <div class="row">
           <div class="col-md-6">
-            <form action="{{ route('disposition.forward', ['type' => $type, 'id' => $dispositionRelation->disposition->id]) }}" method="POST" class="form-group">
+            <form action="{{ route('disposition.forward', ['type' => $type, 'id' => $dispositionRelation->id]) }}" method="POST" class="form-group">
                 @csrf
-                <select name="to_user" id="" class="form-control @error('to_user') is-invalid @enderror">
-                    <option value="">-- Pilih pengguna --</option>
+                <select multiple name="to_user[]" id="" class="form-control @error('to_user') is-invalid @enderror">
+                    <option disabled value="">-- Pilih pengguna --</option>
                     @foreach ($users as $user)
                         <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->department->name }}</option>
                     @endforeach

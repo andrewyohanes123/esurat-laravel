@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\LetterFile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class LetterFileController extends Controller
 {
@@ -35,7 +38,31 @@ class LetterFileController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->id);
+        $request->validate([
+            'file' => 'required',
+            'file.*' => 'mimes:jpg,png,jpeg,gif,bmp,pdf',
+        ], [
+            'file.required' => 'Masukkan file',
+            'file.*.mimes' => 'File surat harus berformat PDF, jpg, png atau jpeg'
+        ]);
+
+        if ($request->hasFile('file')) {
+            foreach ($request->file('file') as $file) :
+                $filename = $file->getClientOriginalName();
+                $name = pathinfo($filename, PATHINFO_FILENAME);
+                $ext = $file->getClientOriginalExtension();
+                $attachment = $name . "_" . time() . "." . $ext;
+                LetterFile::create([
+                    'name' => $name,
+                    'file' => $attachment,
+                    'type' => $file->getClientMimeType(),
+                    'disposition_id' => intval($request->id)
+                ]);
+                $file->storeAs('public/attachments', $attachment);
+            endforeach;
+        }
+        return redirect()->route('disposition.edit', ['id' => $request->disposition]);
     }
 
     /**
@@ -78,8 +105,11 @@ class LetterFileController extends Controller
      * @param  \App\LetterFile  $letterFile
      * @return \Illuminate\Http\Response
      */
-    public function destroy(LetterFile $letterFile)
+    public function destroy($id, Request $req)
     {
-        //
+        $file = LetterFile::findOrFail($id)->file;
+        $res = Storage::delete("public/attachments/{$file}");
+        $file = LetterFile::destroy($id);
+        return $file ? redirect()->route('disposition.edit', ['id' => $req->disposition])  : '';
     }
 }

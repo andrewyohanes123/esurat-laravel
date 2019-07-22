@@ -17,6 +17,8 @@
             <input type="text" placeholder="Nama Lengkap" name="name" class="form-control">
             <label for="" class="control-label">Alamat Email</label>
             <input type="email" placeholder="Alamat Email" name="email" class="form-control">
+            <label for="" class="control-label">Nomor Telepon</label>
+            <input type="number" placeholder="Nomor Telepon" name="phone_number" class="form-control">
             <label for="" class="control-label">Password</label>
             <input type="password" placeholder="Password" name="password" class="form-control">
             <label for="" class="control-label">Jabatan</label>
