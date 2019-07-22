@@ -133,9 +133,31 @@ class DispositionController extends Controller
      * @param  \App\Disposition  $disposition
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Disposition $disposition)
+    public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'purpose' => 'required',
+            'content' => 'nullable',
+            'description' => 'required',
+            'reference_number' => 'required',
+            'letter_type_id' => 'required',
+        ], [
+            'purpose.required' => 'Masukkan tujuan surat',
+            'description.required' => 'Masukkan deskripsi surat',
+            'to_user.required' => 'Pilih penerima disposisi',
+            'letter_type_id.required' => 'Pilih tipe surat',
+            'reference_number.required' => 'Masukkan nomor surat',
+        ]);
+
+        $disposition = Disposition::where('id', $id)->update([
+            'purpose' => $request->purpose,
+            'content' => $request->description,
+            'reference_number' => $request->reference_number,
+            'letter_type_id' => $request->letter_type_id,
+            'description' => $request->description
+        ]);
+
+        return $disposition ? redirect()->route('disposition.edit', ['id' => $request->disposition]) : $request->all();
     }
 
     /**

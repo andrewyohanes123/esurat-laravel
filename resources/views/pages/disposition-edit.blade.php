@@ -8,7 +8,6 @@
             <i class="fa fa-edit fa-lg"></i>&nbsp;Edit {{ $dispositionRelation->disposition->reference_number }}
         @endslot
         {{-- <form action="{{ route('disposition.store') }}" method="POST" enctype="multipart/form-data" class="form-group"> --}}
-            @csrf
             @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
             @elseif(session('failed'))
@@ -16,35 +15,42 @@
             @endif
             <div class="row">
                 <div class="col-md-6">
-                    <label for="" class="control-label my-2">Nomor Surat</label>
-                    <input type="text" placeholder="Nomor Surat" class="form-control @error('reference_number') is-invalid @enderror" value="{{ $errors->first('reference_number') ? old('reference_number') : $dispositionRelation->disposition->reference_number }}" name="reference_number">
-                    @error('reference_number')
-                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                    @enderror
-                    <label for="" class="control-label my-2">Tujuan</label>
-                    <input type="text" placeholder="Tujuan Surat" name="purpose" value="{{ $errors->first('purpose') ? old('purpose') : $dispositionRelation->disposition->purpose }}" class="form-control @error('purpose') is-invalid @enderror">
-                    @error('purpose')
-                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                    @enderror
-                    <label for="" class="control-label my-2">Tipe Surat</label>
-                    @if (sizeof($letterTypes) > 0)
-                        <select name="letter_type_id" id="" class="form-control @error('letter_type_id') is-invalid @enderror">
-                            <option value="">-- Pilih Tipe Surat --</option>
-                            @foreach ($letterTypes as $type)
-                            <option {{ old('letter_type_id') === $type->id ? 'selected' : '' || $dispositionRelation->disposition->letter_type_id === $type->id ? 'selected' : '' }} value="{{ $type->id }}">{{ $type->name }}</option>
-                            @endforeach
-                        </select>
-                    @else
-                        <input type="text" name="" disabled class="form-control" placeholder="Tidak ada tipe surat. Hubungi Super Admin" id="">
-                    @endif
-                    @error('letter_type_id')
-                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                    @enderror
-                    <label for="" class="control-label my-2">Deskripsi</label>
-                    <textarea name="description" rows="5" style="resize: none" placeholder="Deskripsi Surat" class="form-control @error('description') is-invalid @enderror">{{ $errors->first('description') ? old('description') : $dispositionRelation->disposition->description }}</textarea>
-                    @error('description')
-                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                    @enderror
+                    <form action="{{ route('disposition.update', ['id' => $dispositionRelation->disposition->id]) }}" class="form-group" method="post">
+                        @method('PUT')
+                        @csrf
+                        <label for="" class="control-label my-2">Nomor Surat</label>
+                        <input type="text" placeholder="Nomor Surat" class="form-control @error('reference_number') is-invalid @enderror" value="{{ $errors->first('reference_number') ? old('reference_number') : $dispositionRelation->disposition->reference_number }}" name="reference_number">
+                        @error('reference_number')
+                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                        @enderror
+                        <input type="hidden" name="disposition" value="{{ $dispositionRelation->id }}">
+                        <label for="" class="control-label my-2">Tujuan</label>
+                        <input type="text" placeholder="Tujuan Surat" name="purpose" value="{{ $errors->first('purpose') ? old('purpose') : $dispositionRelation->disposition->purpose }}" class="form-control @error('purpose') is-invalid @enderror">
+                        @error('purpose')
+                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                        @enderror
+                        <label for="" class="control-label my-2">Tipe Surat</label>
+                        @if (sizeof($letterTypes) > 0)
+                            <select name="letter_type_id" id="" class="form-control @error('letter_type_id') is-invalid @enderror">
+                                <option value="">-- Pilih Tipe Surat --</option>
+                                @foreach ($letterTypes as $type)
+                                <option {{ old('letter_type_id') === $type->id ? 'selected' : '' || $dispositionRelation->disposition->letter_type_id === $type->id ? 'selected' : '' }} value="{{ $type->id }}">{{ $type->name }}</option>
+                                @endforeach
+                            </select>
+                        @else
+                            <input type="text" name="" disabled class="form-control" placeholder="Tidak ada tipe surat. Hubungi Super Admin" id="">
+                        @endif
+                        @error('letter_type_id')
+                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                        @enderror
+                        <label for="" class="control-label my-2">Deskripsi</label>
+                        <textarea name="description" rows="5" style="resize: none" placeholder="Deskripsi Surat" class="form-control @error('description') is-invalid @enderror">{{ $errors->first('description') ? old('description') : $dispositionRelation->disposition->description }}</textarea>
+                        @error('description')
+                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                        @enderror
+                        <hr>
+                        <button class="btn btn-outline-success btn-sm">Simpan</button>
+                    </form>
                 </div>
                 <div class="col-md-6">
                     <h5 class="my-1">Tambah file</h5>
@@ -59,18 +65,18 @@
                         <button class="btn btn-success btn-sm">Tambah</button>
                     </form>
                     <hr>
-                    <div class="card-columns">
+                    <div style="column-count:2 !important;" class="card-columns">
                         @php 
                             $files = $dispositionRelation->disposition->letterFiles()->get() 
                         @endphp
                         @foreach ( $files as $file)
                             {{-- <div class="col-sm-6 col-md-6 my-2"> --}}
-                                <div class="card">
+                                <div class="card border-0 shadow-sm">
                                     @if ($file->type !== 'application/pdf')
                                         <img src="{{ Storage::url('attachments/' . $file->file) }}" alt="" class="card-img-top">
                                     @endif
-                                    <div class="card-body">
-                                        {{ Str::limit($file->name, 10) }}
+                                    <div class="card-body bg-light">
+                                        {{ Str::limit($file->name, 20) }}
                                         <form action="{{ route('files.destroy', ['id' => $file->id]) }}" method="POST" class="inline-form">
                                                 @csrf
                                                 @method('DELETE')
