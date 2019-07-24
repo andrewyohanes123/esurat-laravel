@@ -30,7 +30,7 @@ versi **Laravel** saat ini : 5.8
 - Inisialisasi repository local git `root directory`
 `git init`
 - Tambahkan repository ini
-`git remote add origin https://github.com/andrewyohanes123/esurat-laravel`
+`git remote add origin https://github.com/andrewyohanes123/esurat-laravel.git`
 - Pull repository
 `git pull origin master`
 - Jalankan script instalasi
