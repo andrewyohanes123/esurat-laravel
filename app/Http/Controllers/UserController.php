@@ -39,6 +39,22 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => 'required|unique:users|email',
+            'password' => 'required',
+            'department_id' => 'required',
+            'phone_number' => 'required'
+        ], [
+            'name.required' => 'Masukkan nama pengguna',
+            'email.required' => 'Masukkan alamat email',
+            'email.unique' => 'Alamat email telah dipakai oleh pengguna lain',
+            'email.email' => 'Masukkan alamat email yang valid',
+            'password.required' => 'Masukkan password',
+            'department_id.required' => 'Pilih jabatan',
+            'phone_number.required' => 'Masukkan nomor telepon'
+        ]);
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -73,7 +89,8 @@ class UserController extends Controller
     public function edit()
     {
         $user = Auth::user();
-        return view('pages.user-edit')->withUser($user);
+        $departments = Department::all();
+        return view('pages.user-edit')->withUser($user)->withDepartments($departments);
     }
 
     /**
@@ -85,7 +102,40 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'password' => 'nullable',
+            'department_id' => 'required',
+            'phone_number' => 'required'
+        ], [
+            'name.required' => 'Masukkan nama pengguna',
+            'email.required' => 'Masukkan alamat email',
+            // 'email.unique' => 'Alamat email telah dipakai oleh pengguna lain',
+            'department_id.required' => 'Pilih jabatan',
+            'phone_number.required' => 'Masukkan nomor telepon'
+        ]);
+
+        if ($request->has('password')) {
+            $user = User::whereId($id)->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'department_id' => $request->department_id,
+                'phone_number' => $request->phone_number
+            ]);
+        } else {
+            $user = User::whereId($id)->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+                'department_id' => $request->department_id,
+                'phone_number' => $request->phone_number
+            ]);
+        }
+
+        return $user ? redirect()->route('user.show', compact('id'))->with('success', 'Sukses mengedit user') 
+        : 
+        redirect()->route('user.show', compact('id'))->with('error', 'Gagal mengedit user');
     }
 
     /**
