@@ -25,10 +25,12 @@ Route::group(['middleware' => 'api_token'], function () {
        $depts = Department::whereNotIn('name', ['Administrator'])->get();
        return response()->json($depts);
    });
+
    Route::get('/departments/{id}', function($id){
        $dept = Department::findOrFail($id);
        return response()->json($dept);
    });
+
    Route::put('/department/{id}', function($id, Request $request){
        $status = Department::whereId($id)->update(['permissions' => serialize($request->permissions)]);
        if ($status) {
@@ -37,16 +39,18 @@ Route::group(['middleware' => 'api_token'], function () {
             return response()->json(['msg' => 'Error', 'status' => false]);
        }
    });
+
    Route::get('/notifications', function (Request $request){
        $user = User::where('api_token', $request->header('USER-TOKEN'))->get()->first();
-       $notifications = DispositionRelation::where('to_user', $user->id)->take(10)->get()->load(['from_user', 'to_user', 'disposition_message', 'disposition']);
-       return ['data' => $notifications, 'count' => $notifications->count()];
-    //    return ['token' => $request->header('USER-TOKEN')];
+       $notifications = $user->notifications;
+       return ['data' => $notifications->take(5), 'count' => $user->unreadNotifications->count()];
    });
+
    Route::get('setting', function(){
        $setting = \App\Setting::orderBy('id', 'DESC')->get()->first();
        return response()->json($setting);
    });
+
    Route::put('setting/{id}', function($id, Request $request){
        \App\Setting::whereId($id)->update([
            'users_allow_create_disposition' => serialize($request->users_allow_create_disposition),

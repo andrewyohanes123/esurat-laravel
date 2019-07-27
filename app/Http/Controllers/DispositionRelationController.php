@@ -9,6 +9,8 @@ use App\LetterFile;
 use App\DispositionMessage;
 use App\Setting;
 use App\Disposition;
+use App\Notifications\ForwardDisposition;
+use App\Notifications\NewDisposition;
 
 class DispositionRelationController extends Controller
 {
@@ -220,7 +222,6 @@ class DispositionRelationController extends Controller
 
         $id = Auth::user()->id;
 
-
         $disposition = Disposition::create([
             'purpose' => $request->purpose,
             'content' => $request->description,
@@ -231,6 +232,11 @@ class DispositionRelationController extends Controller
             'from_user' => $id,
             'last_user' => $request->to_user
         ]);
+
+        $notify_user = \App\User::findOrFail($request->to_user);
+        $notify_user->notify(new NewDisposition(Auth::user(), $notify_user, $disposition));
+
+
 
         $dispositionMessage = DispositionMessage::create([
             'user_id' => $id,
@@ -276,7 +282,9 @@ class DispositionRelationController extends Controller
 
         $idUser = Auth::user()->id;
 
-        $d = Disposition::whereId($request->disposition_id)->update([
+        $d = Disposition::whereId($request->disposition_id)->get()->first();
+        
+        $status = $d->update([
             'last_user' => $request->to_user[0]
         ]);
 
@@ -285,7 +293,17 @@ class DispositionRelationController extends Controller
             'message' => $request->message
         ]);
 
+        
         foreach($request->to_user as $user) {
+            $from_user = \App\User::findOrFail($d->from_user);
+            $notify_user = \App\User::findOrFail($user);
+
+            $notify_user->notify(new ForwardDisposition(Auth::user(), $notify_user, $d));
+
+            if (Auth::user()->id !== $from_user->id) {
+                $from_user->notify(new ForwardDisposition(Auth::user(), $notify_user, $d));
+            }
+
             DispositionRelation::create([
                 'from_user' => $idUser,
                 'to_user' => $user,
@@ -295,7 +313,7 @@ class DispositionRelationController extends Controller
         }
 
         // return $id;
-        return $d ? redirect()->route('disposition.showtype', compact('id', 'type'))->with('success', 'Berhasil didisposisi') : '';
+        return $status ? redirect()->route('disposition.showtype', compact('id', 'type'))->with('success', 'Berhasil didisposisi') : '';
     }
     /**
      * Display the specified resource.

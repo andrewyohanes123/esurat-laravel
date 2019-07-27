@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Disposition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\VerifiedLetter;
 
 class DispositionController extends Controller
 {
@@ -36,7 +37,10 @@ class DispositionController extends Controller
 
     public function verification($type, $id)
     {
-        $status = Disposition::whereId($id)->update(['done' => 1]);
+        $d = Disposition::whereId($id);
+        $user = \App\User::findOrFail($d->first()->from_user);
+        $status = $d->update(['done' => 1]);
+        $user->notify(new VerifiedLetter(Auth::user(), $user, $d->first()));
         return $status ? redirect()->route('disposition.showtype', compact('id', 'type')) : '';
     }
 

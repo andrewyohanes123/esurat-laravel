@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\User;
 use App\Department;
 
@@ -61,7 +62,8 @@ class UserController extends Controller
             'password' => bcrypt($request->password),
             'role' => 'employee',
             'department_id' => $request->department_id,
-            'phone_number' => $request->phone_number
+            'phone_number' => $request->phone_number,
+            'api_token' => Str::random()
         ]);
 
         if ($user) return redirect()->route('user.index');

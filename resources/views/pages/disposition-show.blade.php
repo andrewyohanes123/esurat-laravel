@@ -13,8 +13,13 @@
         @if (session('success'))
 
         @endif
-        <div class="row">
-          <div class="col-md-6 my-2">
+        <div class="row justify-content-between">
+          @if (Auth::user()->id === $dispositionRelation->disposition->from_user)
+          <div class="col-md-12">
+            <p class="text-muted m-0">Status : {{ $dispositionRelation->disposition->done ? 'Terverifikasi' : 'Belum diverifikasi' }}</p>
+          </div>
+          @endif
+          <div class="col-md-4 my-2">
             <h5 class=" m-0"><span class="badge badge-primary badge-lg">{{ $dispositionRelation->from_user()->first()->name }}</span>
               <i class="fa fa-angle-right fa-md"></i>
               <span class="badge badge-success badge-lg">{{ $dispositionRelation->to_user()->first()->name }}</span>
