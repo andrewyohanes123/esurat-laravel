@@ -11,6 +11,7 @@ use App\Setting;
 use App\Disposition;
 use App\Notifications\ForwardDisposition;
 use App\Notifications\NewDisposition;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 class DispositionRelationController extends Controller
 {
@@ -236,8 +237,6 @@ class DispositionRelationController extends Controller
         $notify_user = \App\User::findOrFail($request->to_user);
         $notify_user->notify(new NewDisposition(Auth::user(), $notify_user, $disposition));
 
-
-
         $dispositionMessage = DispositionMessage::create([
             'user_id' => $id,
             'message' => $request->description
@@ -299,6 +298,11 @@ class DispositionRelationController extends Controller
             $notify_user = \App\User::findOrFail($user);
 
             $notify_user->notify(new ForwardDisposition(Auth::user(), $notify_user, $d));
+            Telegram::sendMessage([
+                'chat_id' => -1001198039198,
+                'parse_mode' => 'HTML',
+                'text' => "Disposisi {$d->reference_number} di-forward ke {$notify_user->name}"
+            ]);
 
             if (Auth::user()->id !== $from_user->id) {
                 $from_user->notify(new ForwardDisposition(Auth::user(), $notify_user, $d));

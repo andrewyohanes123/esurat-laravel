@@ -6,6 +6,7 @@ use App\Disposition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\VerifiedLetter;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 class DispositionController extends Controller
 {
@@ -41,6 +42,13 @@ class DispositionController extends Controller
         $user = \App\User::findOrFail($d->first()->from_user);
         $status = $d->update(['done' => 1]);
         $user->notify(new VerifiedLetter(Auth::user(), $user, $d->first()));
+        $auth = Auth::user();
+        $d = $d->first();
+        Telegram::sendMessage([
+            'chat_id' => -1001198039198,
+            'parse_mode' => 'HTML',
+            'text' => "{$auth->name} memverifikasi disposisi {$d->reference_number}"
+        ]);
         return $status ? redirect()->route('disposition.showtype', compact('id', 'type')) : '';
     }
 

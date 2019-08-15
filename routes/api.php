@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use App\Department;
 use App\DispositionRelation;
 use App\User;
+// use Telegram;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,8 +17,8 @@ use App\User;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('/bot-update', function() {
+    return Telegram::getUpdates();
 });
 
 Route::group(['middleware' => 'api_token'], function () {

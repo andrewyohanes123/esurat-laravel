@@ -11,9 +11,21 @@
 |
 */
 
+
+use Telegram\Bot\Laravel\Facades\Telegram;
+
 Route::get('/', function () {
     return view('auth.login');
 })->middleware('guest');
+
+Route::get('telegram', function(){
+    // dd(env('TELEGRAM_CHANNEL_ID', ''));
+    // Telegram::sendMessage([
+    //     'chat_id' => env('TELEGRAM_CHANNEL_ID', -1001198039198),
+    //     'parse_mode' => "HTML",
+    //     'text' => 'Testng'
+    // ]);
+});
 
 Auth::routes();
 Route::resource('department', 'DepartmentController');
